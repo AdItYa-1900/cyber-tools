@@ -1,0 +1,19 @@
+OPERATION KHIDKI - synthetic case brief (fictional)
+
+On 14 March 2026 the complainant received an SMS from header BZ-SBIVERIFY
+warning that the account would be blocked for incomplete KYC, with a link to
+sbi-kyc-verify.xyz. Credentials were entered. Within nine minutes Rs 2,50,000
+left the account by IMPS, followed by two further transfers.
+
+The receiving account is held in the name of Ramesh Kumar. Its statement shows
+each credit dispersed within minutes to four UPI handles, with the residue
+withdrawn in cash at an ATM in Koramangala.
+
+Two suspect numbers have been identified. Their CDRs share contacts that neither
+of them is. Tower dumps were obtained for the three ATM locations used across
+three consecutive evenings.
+
+Every number, account, IMEI and identity document in this corpus is fabricated.
+Numbers are drawn from ranges that will not collide with live subscribers, and
+identity documents use an obviously synthetic format. Nothing here is real data
+about any real person.

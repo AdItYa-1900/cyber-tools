@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sutra</title>
+<meta name="description" content="Sutra. An offline investigation bench: reference lookups and evidence-file analysis that run entirely in the browser.">
+<meta name="theme-color" content="#635BFF">
+<link rel="stylesheet" href="assets/app.css?v=34">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23635BFF'/%3E%3Cpath d='M9 9.6 15.4 20 23 10.2' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='9.6' r='2.7' fill='%23fff'/%3E%3Ccircle cx='15.4' cy='20' r='2.7' fill='%23fff'/%3E%3Ccircle cx='23' cy='10.2' r='2.7' fill='%23fff'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="#/">
+      <span class="brand-mark" id="brand-mark"></span>
+      <span class="brand-text">
+        <span class="brand-name">Sutra</span>
+        <span class="brand-sub">Investigation bench</span>
+      </span>
+      <button class="btn ghost sm menu-btn" id="menu-btn" aria-expanded="false" aria-label="Toggle navigation">Menu</button>
+    </a>
+
+    <div class="side-search">
+      <div class="searchbox">
+        <input type="search" id="nav-search" placeholder="Search tools&hellip;" autocomplete="off" readonly>
+        <span class="kbd">Ctrl K</span>
+      </div>
+    </div>
+
+    <nav class="nav"></nav>
+
+    <div class="side-foot">
+      <span class="lock">Runs entirely on this machine</span>
+      <button class="btn ghost sm" id="theme-toggle" title="Toggle light or dark" aria-label="Toggle light or dark theme">&#9680;</button>
+    </div>
+  </aside>
+
+  <main class="main"></main>
+</div>
+
+<div class="toast-host"></div>
+
+<!-- core runtime -->
+<script src="assets/core.js?v=34"></script>
+
+<!-- content and reference data -->
+<script src="assets/ingest.js?v=34"></script>
+<script src="data/i18n.js?v=34"></script>
+<script src="data/telecom.js?v=34"></script>
+<script src="data/reference.js?v=34"></script>
+
+<!-- tools, grouped by the question they answer -->
+<script src="tools/identity.js?v=34"></script>
+<script src="tools/device.js?v=34"></script>
+<script src="tools/telecom.js?v=34"></script>
+<script src="tools/cellspyder.js?v=34"></script>
+<script src="tools/money.js?v=34"></script>
+<script src="tools/moneytrail.js?v=34"></script>
+<script src="tools/network.js?v=34"></script>
+<script src="tools/movement.js?v=34"></script>
+<script src="tools/police.js?v=34"></script>
+<script src="tools/case.js?v=34"></script>
+<script src="tools/extras.js?v=34"></script>
+
+<script>
+  document.getElementById("brand-mark").innerHTML = TK.logoMark(17);
+  TK.boot();
+</script>
+</body>
+</html>

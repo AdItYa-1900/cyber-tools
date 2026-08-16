@@ -1,0 +1,19 @@
+CUSTOMER ACQUISITION FORM EXTRACT
+Operator,Airtel Karnataka
+Ref,NODAL/LEA/2026/04412
+
+MSISDN,Subscriber Name,ID Type,ID Number,Address,Date of Activation,POS Code,Status,Alternate Number
+9876543210,Ramesh Kumar,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 00:00,POS-KA-88231,Disconnected,7312041300
+8765432109,S Devaraj,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 00:17,POS-KA-88231,Active,9017505108
+7654321098,Mohan Rao,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 00:34,POS-KA-88231,Active,8437044872
+9012345678,Anil Kumar,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 00:51,POS-KA-88231,Active,6783127061
+6037175897,Prakash N,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 01:08,POS-KA-88231,Active,6233742464
+7417688030,Suresh Babu,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 01:25,POS-KA-88231,Disconnected,9490975641
+8412586666,Vijay Kumar,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 01:42,POS-KA-88231,Active,8995368092
+7643879746,Ganesh M,Aadhaar,TESTID9911X,"No 14, 3rd Cross, Shivaji Nagar, Bengaluru 560051",01-02-2026 01:59,POS-KA-88231,Active,8108604079
+8336253814,Kiran Reddy,Passport,DOC411788,"No 13, BTM Layout, Bengaluru",04-07-2025 00:00,POS-KA-38584,Active,8350396115
+6091854238,Naveen S,Driving Licence,DOC552298,"No 26, BTM Layout, Bengaluru",02-11-2025 00:00,POS-KA-58476,Active,6979835506
+9680259017,Ravi Shankar,Passport,DOC633690,"No 40, Jayanagar, Bengaluru",01-12-2025 00:00,POS-KA-96651,Disconnected,6050373286
+7047489319,Manjunath B,Passport,DOC895002,"No 29, BTM Layout, Bengaluru",10-07-2025 00:00,POS-KA-69518,Active,7347407698
+6908901015,Girish Kumar,Driving Licence,DOC519377,"No 22, HSR Layout, Bengaluru",14-08-2025 00:00,POS-KA-70589,Active,9185812028
+9868019147,Santosh Raj,Driving Licence,DOC237836,"No 46, HSR Layout, Bengaluru",29-06-2025 00:00,POS-KA-80113,Active,6004904256
