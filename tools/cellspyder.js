@@ -235,11 +235,8 @@
       var opFilter = {};
 
       root.innerHTML =
-        '<div class="note info"><b>Where the coordinates must come from</b>' +
-        "<p>The authoritative site list is the cell site master data the licensee supplies with the CDR, " +
-        "under the same requisition. Crowdsourced tower databases estimate positions from handset " +
-        "observations and are routinely out by hundreds of metres, fine for orientation, never for " +
-        "placing a person. Load the operator's list below.</p></div>" +
+        '<p class="small muted">Use the cell site list the operator supplied with the CDR. ' +
+        'Crowdsourced tower databases are often out by hundreds of metres.</p>' +
 
         '<div class="card"><div class="row" style="justify-content:space-between">' +
           "<h3 style=\"margin:0\">Site database</h3><span id=\"cs-dbstat\" class=\"xs muted\"></span></div>" +
@@ -472,10 +469,8 @@
 
         h += '<div class="card"><h3>Tower details</h3><div id="cs-tbl"></div></div>';
 
-        h += '<div class="note danger"><b>What a serving cell does and does not prove</b>' +
-          "<p>It shows which sector the phone was connected to at that moment. A sector can reach several " +
-          "kilometres. The serving tower is not always the nearest one. Phones also hold on to a tower well " +
-          "after another is closer. So this places a phone in an area. It does not place a person at an address.</p></div>";
+        h += '<p class="small muted">A serving cell places a phone in a sector, which can span ' +
+          "kilometres. It does not place a person at an address.</p>";
 
         $("#cs-out").innerHTML = h;
 

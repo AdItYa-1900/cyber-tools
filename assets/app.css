@@ -33,11 +33,11 @@
   --fg-2:      #697386;   /* secondary */
   --fg-3:      #8792A2;   /* muted / labels */
 
-  --accent:      #635BFF;
-  --accent-2:    #7A73FF;
-  --accent-3:    #4F46E5;
-  --accent-bg:   #F1F0FF;
-  --accent-line: #D7D4FF;
+  --accent:      #6D28D9;
+  --accent-2:    #8B5CF6;
+  --accent-3:    #5B21B6;
+  --accent-bg:   #F5F3FF;
+  --accent-line: #DDD6FE;
 
   --ok:     #0E7C5A;  --ok-bg:     #E6F6EF;  --ok-line:  #B6E3D0;
   --warn:   #9A6B05;  --warn-bg:   #FDF3DC;  --warn-line:#EFDCA9;
@@ -59,14 +59,13 @@
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
 
-  --r1: 4px;  --r2: 6px;  --r3: 8px;  --r4: 12px;
+  --r1: 5px;  --r2: 8px;  --r3: 12px; --r4: 18px;
 
   --sh-1: 0 1px 1px rgba(10,37,64,.05), 0 0 0 1px rgba(10,37,64,.04);
-  --sh-2: 0 2px 5px -1px rgba(10,37,64,.08), 0 1px 3px -1px rgba(10,37,64,.06);
-  --sh-3: 0 15px 35px -5px rgba(10,37,64,.12), 0 5px 15px -5px rgba(10,37,64,.08);
-  --ring: 0 0 0 3px rgba(99,91,255,.24);
+  --sh-2: 0 1px 2px rgba(10,37,64,.07), 0 4px 10px -2px rgba(10,37,64,.09), 0 12px 24px -8px rgba(10,37,64,.10);
+  --sh-3: 0 1px 2px rgba(10,37,64,.08), 0 8px 20px -4px rgba(10,37,64,.12), 0 28px 56px -12px rgba(10,37,64,.18);
+  --ring: 0 0 0 3px rgba(109,40,217,.26);
 
-  --sidebar: 250px;
   --header-h: 58px;
 }
 
@@ -89,11 +88,11 @@
   --fg-2:   #8FA0B5;
   --fg-3:   #6B7D95;
 
-  --accent:      #8B85FF;
-  --accent-2:    #A29DFF;
-  --accent-3:    #6E66FF;
-  --accent-bg:   #1B1F45;
-  --accent-line: #33306B;
+  --accent:      #A78BFA;
+  --accent-2:    #C4B5FD;
+  --accent-3:    #8B5CF6;
+  --accent-bg:   #241B45;
+  --accent-line: #43317B;
 
   --ok:     #3ECF8E;  --ok-bg:     #0C2A21;  --ok-line:  #17493A;
   --warn:   #E5B33D;  --warn-bg:   #2C2410;  --warn-line:#4A3D18;
@@ -101,9 +100,9 @@
   --info:   #A29DFF;  --info-bg:   #1B1F45;  --info-line:#33306B;
 
   --sh-1: 0 1px 1px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.04);
-  --sh-2: 0 2px 6px -1px rgba(0,0,0,.4);
-  --sh-3: 0 16px 40px -8px rgba(0,0,0,.6);
-  --ring: 0 0 0 3px rgba(139,133,255,.28);
+  --sh-2: 0 1px 2px rgba(0,0,0,.35), 0 4px 12px -2px rgba(0,0,0,.45), 0 14px 28px -10px rgba(0,0,0,.5);
+  --sh-3: 0 1px 2px rgba(0,0,0,.4), 0 10px 24px -6px rgba(0,0,0,.55), 0 30px 60px -14px rgba(0,0,0,.65);
+  --ring: 0 0 0 3px rgba(167,139,250,.30);
 }
 
 * { box-sizing: border-box; }
@@ -120,7 +119,6 @@ svg.ic { vertical-align: middle; }
   border-radius: var(--r1);
   background: color-mix(in srgb, currentColor 12%, transparent);
 }
-.nav-group > h4 .cl-ic { width: 18px; height: 18px; border-radius: 3px; }
 .tool-eyebrow .cl-ic { width: 20px; height: 20px; }
 
 .brand-mark svg { display: block; }
@@ -152,14 +150,28 @@ svg.ic { vertical-align: middle; }
 .rail-item { animation: fade-up .28s ease-out both; }
 .rail-item:nth-child(n+6) { animation-delay: 0ms; }
 
+/* Two very soft washes, fixed to the viewport so content scrolls across
+   a stable field rather than dragging the colour with it. Kept faint:
+   this sits behind evidence tables that have to stay readable. */
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(1100px 620px at 8% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 62%),
+    radial-gradient(900px 520px at 96% 2%, color-mix(in srgb, #0EA5E9 11%, transparent), transparent 64%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--fg-1);
   font: 400 var(--t-md)/1.7 var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
+}
+[data-theme="dark"] body {
+  background:
+    radial-gradient(1100px 620px at 8% -10%, color-mix(in srgb, var(--accent) 17%, transparent), transparent 62%),
+    radial-gradient(900px 520px at 96% 2%, color-mix(in srgb, #0EA5E9 13%, transparent), transparent 64%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 ::selection { background: var(--accent-bg); color: var(--accent-3); }
@@ -178,14 +190,36 @@ a:hover { text-decoration: underline; }
 
 /* ============================================================ shell */
 
-.app { display: flex; height: 100vh; overflow: hidden; }
+/* Column shell: a fixed-height bar, then the page. The sidebar that used
+   to sit alongside is gone; the home page and the palette cover its job. */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
 
-.sidebar {
-  width: var(--sidebar); flex: 0 0 var(--sidebar);
-  background: var(--bg-1);
-  border-right: 1px solid var(--line);
-  display: flex; flex-direction: column; min-height: 0;
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: var(--s4);
+  height: var(--header-h); flex: none;
+  padding: 0 var(--s5);
+  background: color-mix(in srgb, var(--bg-1) 82%, transparent);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
 }
+.topbar .brand { border-bottom: 0; padding: 0; height: auto; flex: none; }
+.topbar .top-search { flex: 1 1 auto; max-width: 420px; margin-left: var(--s3); }
+.topbar .top-search .searchbox { width: 100%; }
+.topbar .lock {
+  margin-left: auto; flex: none;
+  font-size: 11.5px; color: var(--fg-3); white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .topbar { padding: 0 var(--s4); gap: var(--s3); }
+  .topbar .lock { display: none; }
+  .topbar .brand-sub { display: none; }
+}
+@media (max-width: 520px) {
+  .topbar .top-search { display: none; }
+}
+
 
 .brand {
   display: flex; align-items: center; gap: 10px;
@@ -209,7 +243,6 @@ a:hover { text-decoration: underline; }
   letter-spacing: .06em; text-transform: uppercase; font-weight: 600;
 }
 
-.side-search { padding: var(--s3) var(--s3) var(--s2); }
 
 .searchbox { position: relative; }
 /* declared after the generic input rules below at equal specificity, so
@@ -234,41 +267,9 @@ a:hover { text-decoration: underline; }
   padding: 1px 5px; background: var(--bg-1); white-space: nowrap;
 }
 
-.nav { overflow-y: auto; flex: 1; padding: var(--s1) 0 var(--s7); min-height: 0; }
-.nav-group + .nav-group { margin-top: var(--s4); }
-.nav-group > h4 {
-  margin: 0; padding: var(--s2) var(--s4) 6px;
-  display: flex; align-items: center; gap: 7px;
-  font-size: 10px; font-weight: 600; letter-spacing: .07em;
-  text-transform: uppercase; color: var(--fg-3);
-}
-.nav-group > h4 .dot { width: 5px; height: 5px; border-radius: 50%; flex: none; background: currentColor; }
 
-.nav a {
-  position: relative; display: flex; align-items: center; gap: var(--s2);
-  margin: 0 var(--s2); padding: 6px 10px 6px 20px;
-  border-radius: var(--r2);
-  color: var(--fg-1); font-size: var(--t-sm); font-weight: 450;
-  transition: background .12s, color .12s;
-}
-.nav a:hover { background: var(--bg-2); color: var(--fg); text-decoration: none; }
-.nav a.active { background: var(--accent-bg); color: var(--accent-3); font-weight: 600; }
 [data-theme="dark"] .nav a.active { color: var(--accent); }
-.nav a .tier {
-  margin-left: auto; font: 600 10px var(--mono); color: var(--fg-3);
-}
-.nav a.active .tier { color: inherit; opacity: .7; }
 
-.side-foot {
-  flex: none; padding: var(--s3) var(--s4);
-  border-top: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: space-between;
-  gap: var(--s2); font-size: var(--t-xs); color: var(--fg-3);
-}
-.side-foot .lock { display: inline-flex; align-items: center; gap: 6px; }
-.side-foot .lock::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok);
-}
 
 .main { flex: 1; overflow-y: auto; min-width: 0; }
 .wrap { max-width: 880px; margin: 0 auto; padding: var(--s6) var(--s5) var(--s8); }
@@ -276,7 +277,19 @@ a:hover { text-decoration: underline; }
 
 /* ============================================================ type */
 
-.tool-head { margin-bottom: var(--s5); }
+/* The tool page opens with a rule in the cluster colour above the title.
+   It costs one line of chrome and tells the officer at a glance which
+   part of the case they are in without reading anything. */
+.tool-head {
+  margin-bottom: var(--s5);
+  padding-bottom: var(--s5);
+  border-bottom: 1px solid var(--line);
+}
+.tool-head .tool-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--fg-3);
+}
 .tool-topline {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--s3); flex-wrap: wrap; margin-bottom: var(--s3);
@@ -337,6 +350,14 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s5) 0; }
 }
 .card.tight { padding: var(--s4); }
 .card > h3:first-child, .card > h2:first-child { margin-top: 0; }
+
+/* A per-result card carries its own verdict edge, taken from the badge it
+   already contains, so scanning a column of results reads as a column of
+   outcomes before a single word is read. Declared worst-last, because a
+   card holding both a pass and a failure should show the failure. */
+.card.tight:has(.badge.ok)     { box-shadow: inset 3px 0 0 var(--ok), var(--sh-1); }
+.card.tight:has(.badge.warn)   { box-shadow: inset 3px 0 0 var(--warn), var(--sh-1); }
+.card.tight:has(.badge.danger) { box-shadow: inset 3px 0 0 var(--danger), var(--sh-1); }
 
 /* ============================================================ badge */
 
@@ -497,9 +518,22 @@ table.tbl tr.hi:hover td { background: var(--warn-bg); filter: brightness(.98); 
 
 /* ============================================================ data */
 
-.kv { display: grid; grid-template-columns: minmax(120px, max-content) 1fr; gap: 8px var(--s5); font-size: var(--t-sm); }
-.kv dt { color: var(--fg-2); }
-.kv dd { margin: 0; font-family: var(--mono); font-size: 12.5px; color: var(--fg); word-break: break-word; }
+/* Label/value pairs are the main way results are shown, so their vertical
+   rhythm sets how much of a result fits on screen. A hairline between rows
+   replaces the wide gap that was doing the separating, which reads as a
+   record rather than as loose text and fits noticeably more per screen. */
+.kv { display: grid; grid-template-columns: minmax(130px, max-content) 1fr; gap: 0 var(--s5); font-size: var(--t-sm); }
+.kv dt {
+  color: var(--fg-2); padding: 7px 0;
+  border-top: 1px solid var(--line); line-height: 1.5;
+}
+.kv dd {
+  margin: 0; padding: 7px 0;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.5;
+  color: var(--fg); word-break: break-word;
+}
+.kv dt:first-of-type, .kv dt:first-of-type + dd { border-top: 0; }
 
 .stat {
   background: var(--bg-1);
@@ -670,30 +704,78 @@ code.inl {
 
 /* ============================================================ home */
 
+/* A filled hero. The boldness of this look comes from committing whole
+   areas to the accent, not from the hue alone. */
 .hero {
-  padding: var(--s6) 0 var(--s5);
-  border-bottom: 1px solid var(--line);
-  margin-bottom: var(--s6);
+  position: relative; overflow: hidden;
+  padding: var(--s7) var(--s5) var(--s6);
+  margin-bottom: var(--s5);
+  border-radius: var(--r4);
+  background: linear-gradient(135deg, var(--accent-3) 0%, var(--accent) 55%, var(--accent-2) 100%);
+  color: #fff;
+  box-shadow: var(--sh-2);
 }
+/* A soft light source in the corner keeps a large flat fill from looking
+   like a plain rectangle. */
+.hero::after {
+  content: ""; position: absolute; right: -12%; top: -55%;
+  width: 62%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.20), transparent 68%);
+  pointer-events: none;
+}
+/* Dot grid, masked so it fades out well before it reaches the headline.
+   A large flat fill reads as a slab without some texture in it. */
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.34) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(120% 90% at 88% 8%, #000 0%, transparent 62%);
+          mask-image: radial-gradient(120% 90% at 88% 8%, #000 0%, transparent 62%);
+  pointer-events: none;
+}
+.hero > * { position: relative; z-index: 1; }
+
+/* A second card peeking out behind the hero, the way a banking app shows
+   another account behind the active one. Pseudo-element, no extra markup. */
+.hero-stack { position: relative; margin-bottom: var(--s5); }
+.hero-stack::before {
+  content: ""; position: absolute; z-index: 0;
+  left: 3.5%; right: 3.5%; top: -13px; height: 40px;
+  border-radius: var(--r4) var(--r4) 0 0;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent-3) 62%, transparent),
+    color-mix(in srgb, var(--accent-3) 34%, transparent));
+  box-shadow: 0 -3px 12px -4px rgba(10,37,64,.22);
+}
+.hero-stack .hero { margin-bottom: 0; }
 .hero .eyebrow {
   display: inline-block;
   font-size: 11px; font-weight: 600; letter-spacing: .07em;
-  text-transform: uppercase; color: var(--accent-3);
+  text-transform: uppercase; color: rgba(255,255,255,.82);
   margin-bottom: var(--s3);
 }
-[data-theme="dark"] .hero .eyebrow { color: var(--accent); }
+[data-theme="dark"] .hero .eyebrow { color: rgba(255,255,255,.82); }
 .hero h1 {
   margin: 0 0 var(--s3);
-  font-size: var(--t-3xl); font-weight: 660;
-  letter-spacing: -1.1px; line-height: 1.15; color: var(--fg);
+  font-size: 40px; font-weight: 700;
+  letter-spacing: -1.4px; line-height: 1.1; color: #fff;
 }
-.hero p { color: var(--fg-2); max-width: 58ch; margin: 0 0 var(--s5); font-size: 16.5px; line-height: 1.7; }
+.hero p { color: rgba(255,255,255,.88); max-width: 54ch; margin: 0 0 var(--s5); font-size: 16.5px; line-height: 1.65; }
 
-.hero-search { position: relative; max-width: 460px; margin-bottom: var(--s5); }
-.hero-search input { padding: 11px 14px 11px 40px; font-size: 14px; border-radius: var(--r2); }
+/* The search field is the primary action, so it is given the full width
+   of the hero and a resting shadow that lifts it off the fill. */
+.hero-search { position: relative; max-width: 560px; margin-bottom: 0; }
+.hero-search input {
+  padding: 15px 16px 15px 46px; font-size: 15.5px;
+  border-radius: var(--r3); border: 0;
+  background: #fff; color: var(--fg);
+  box-shadow: 0 6px 18px -6px rgba(10,37,64,.35);
+}
+.hero-search input::placeholder { color: var(--fg-3); }
+.hero-search input:focus { box-shadow: 0 6px 18px -6px rgba(10,37,64,.35), 0 0 0 3px rgba(255,255,255,.55); }
 .hero-search::before {
-  content: ""; position: absolute; left: 14px; top: 50%;
-  width: 15px; height: 15px; margin-top: -7px; background: var(--fg-3);
+  content: ""; position: absolute; left: 17px; top: 50%;
+  width: 17px; height: 17px; margin-top: -8px; background: var(--fg-3); z-index: 2;
   -webkit-mask: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.8-3.8'/%3E%3C/svg%3E");
           mask: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.8-3.8'/%3E%3C/svg%3E");
 }
@@ -705,36 +787,279 @@ code.inl {
 }
 
 .cluster { margin-bottom: var(--s6); }
+/* A section header is a title, a plain-language gloss, then a rule that
+   runs to the end of the row. The rule is what makes a long scrolling
+   page read as a set of sections rather than an undifferentiated list. */
 .cluster-head {
-  display: flex; align-items: baseline; gap: var(--s3);
-  margin-bottom: var(--s3); flex-wrap: wrap;
+  display: flex; align-items: center; gap: var(--s3);
+  margin-bottom: var(--s4); flex-wrap: wrap;
 }
 .cluster-head h2 {
   margin: 0; font-size: var(--t-lg); font-weight: 620; letter-spacing: -.2px;
-  display: flex; align-items: center; gap: 8px; color: var(--fg);
+  display: flex; align-items: center; gap: 9px; color: var(--fg);
 }
 .cluster-head h2 .dot { width: 6px; height: 6px; border-radius: 50%; flex: none; background: currentColor; }
-.cluster-head .q { color: var(--fg-3); font-size: var(--t-sm); }
+.cluster-head .q {
+  color: var(--fg-3); font-size: var(--t-sm);
+  padding-left: var(--s3); border-left: 1px solid var(--line-2);
+}
+.cluster-head .cl-count {
+  margin-left: auto; flex: none;
+  min-width: 21px; height: 21px; padding: 0 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px; background: var(--bg-3); color: var(--fg-3);
+  font: 600 11px/1 var(--sans); font-variant-numeric: tabular-nums;
+}
+.tool-grid { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); }
 
-.tool-grid { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); }
-
+/* The card is a three-column grid: icon, text, chevron. Fixing the outer
+   two columns keeps every title on the same optical line across the row,
+   which a flex layout does not guarantee once names differ in length. */
 .tool-card {
-  display: block; color: inherit;
+  display: grid; grid-template-columns: 30px 1fr 16px;
+  align-items: start; gap: var(--s3);
+  color: inherit; position: relative; overflow: hidden;
   background: var(--bg-1); border: 1px solid var(--line);
   border-radius: var(--r3); padding: var(--s4);
   box-shadow: var(--sh-1);
-  transition: border-color .14s, box-shadow .14s, transform .14s;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+/* A hairline of cluster colour on the left edge, revealed on hover. It
+   ties the card back to its section without adding permanent chrome. */
+.tool-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent); opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity .15s, transform .15s;
 }
 .tool-card:hover {
   border-color: var(--line-3); box-shadow: var(--sh-2);
-  transform: translateY(-1px); text-decoration: none;
+  transform: translateY(-3px); text-decoration: none;
 }
-.tool-card .tc-top { display: flex; align-items: center; gap: var(--s2); margin-bottom: 6px; }
-.tool-card .tc-name { font-weight: 600; font-size: var(--t-md); letter-spacing: -.1px; color: var(--fg); }
+.tool-card:hover::before { opacity: 1; transform: translateX(0); }
+.tool-card:focus-visible { box-shadow: var(--ring); border-color: var(--accent); }
+
+.tool-card .tc-ic {
+  width: 30px; height: 30px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--r2);
+  background: var(--bg-2); border: 1px solid var(--line);
+  transition: background .15s, border-color .15s;
+}
+.tool-card:hover .tc-ic { background: var(--accent-bg); border-color: var(--accent-line); }
+.tool-card .tc-body { min-width: 0; display: block; }
+.tool-card .tc-name {
+  display: block; margin-bottom: 3px;
+  font-weight: 600; font-size: var(--t-md); letter-spacing: -.1px;
+  line-height: 1.4; color: var(--fg);
+}
 .tool-card:hover .tc-name { color: var(--accent-3); }
 [data-theme="dark"] .tool-card:hover .tc-name { color: var(--accent); }
-.tool-card .tc-desc { font-size: 13.5px; color: var(--fg-2); line-height: 1.6; }
+.tool-card .tc-desc { display: block; font-size: 13.5px; color: var(--fg-2); line-height: 1.58; }
+.tool-card .tc-go {
+  align-self: center; color: var(--fg-3);
+  opacity: 0; transform: translateX(-4px);
+  transition: opacity .15s, transform .15s, color .15s;
+}
+.tool-card:hover .tc-go { opacity: 1; transform: translateX(0); color: var(--accent); }
 .tool-card .tc-tier { margin-left: auto; }
+
+
+/* ------------------------------------------------- category tiles
+   A launcher row: icon, name, count. These are filters rather than
+   links, so the grid below narrows in place and the officer never
+   loses the search box. Horizontally scrollable when the row does not
+   fit, which is how this pattern behaves on a phone. */
+.cat-row {
+  display: flex; gap: var(--s3);
+  overflow-x: auto; padding: 2px 2px var(--s3);
+  margin-bottom: var(--s5);
+  scrollbar-width: thin;
+}
+.cat-tile {
+  flex: 0 0 auto; width: 116px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: var(--s3) var(--s3) 11px;
+  border: 1px solid var(--line); border-radius: var(--r3);
+  background: var(--bg-1); box-shadow: var(--sh-1);
+  cursor: pointer; text-align: left; font: inherit;
+  transition: border-color .15s, box-shadow .15s, transform .15s, background .15s;
+}
+/* Tilt follows the pointer. --rx/--ry are written by one delegated
+   listener; the tile itself only has to interpolate them. */
+.cat-tile {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.cat-row { perspective: 900px; }
+.cat-tile:hover {
+  border-color: var(--line-3);
+  box-shadow: var(--sh-2);
+  transform: translateY(-3px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+.cat-tile:hover .cat-ic { transform: translateZ(16px) scale(1.04); }
+.cat-tile .cat-ic { transition: transform .18s cubic-bezier(.22,.9,.3,1), background .15s; }
+.cat-tile .cat-name, .cat-tile .cat-n { transform: translateZ(6px); }
+.cat-tile:focus-visible { box-shadow: var(--ring); border-color: var(--accent); }
+/* Icon medallion. A flat tint reads as a sticker; a gradient plus a
+   lit top edge and a shadow of the icon's own hue reads as an object
+   sitting on the card, which is what the reference does. */
+.cat-tile .cat-ic {
+  position: relative;
+  width: 44px; height: 44px; margin-bottom: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  background:
+    linear-gradient(160deg,
+      color-mix(in srgb, currentColor 26%, transparent),
+      color-mix(in srgb, currentColor 12%, transparent));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 65%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, currentColor 18%, transparent),
+    0 4px 10px -3px color-mix(in srgb, currentColor 42%, transparent);
+}
+[data-theme="dark"] .cat-tile .cat-ic {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent),
+    0 4px 10px -3px color-mix(in srgb, currentColor 34%, transparent);
+}
+/* a small highlight, the specular dot on a moulded surface */
+.cat-tile .cat-ic::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(60% 42% at 30% 12%,
+    color-mix(in srgb, #fff 55%, transparent), transparent 70%);
+  pointer-events: none;
+}
+[data-theme="dark"] .cat-tile .cat-ic::after {
+  background: radial-gradient(60% 42% at 30% 12%,
+    color-mix(in srgb, #fff 16%, transparent), transparent 70%);
+}
+.cat-tile .cat-ic.all { color: var(--accent); }
+.cat-tile .cat-name {
+  font-size: 12.5px; font-weight: 600; color: var(--fg);
+  line-height: 1.3; letter-spacing: -.1px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.cat-tile .cat-n { font-size: 11px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+
+/* The selected tile inverts, so the current filter is unmistakable. */
+.cat-tile.on {
+  position: relative; overflow: hidden;
+  background: var(--accent); border-color: var(--accent);
+  box-shadow: 0 2px 6px -1px color-mix(in srgb, var(--accent) 45%, transparent),
+              0 10px 22px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.cat-tile.on::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: conic-gradient(from 210deg at 78% 12%,
+    rgba(255,255,255,.30), transparent 32%, transparent 74%, rgba(255,255,255,.16));
+}
+.cat-tile.on .cat-name { color: #fff; }
+.cat-tile.on .cat-n { color: rgba(255,255,255,.78); }
+.cat-tile.on .cat-ic { background: rgba(255,255,255,.22); color: #fff; }
+[data-theme="dark"] .cat-tile.on .cat-name { color: #0A1626; }
+[data-theme="dark"] .cat-tile.on .cat-n { color: rgba(10,22,38,.7); }
+[data-theme="dark"] .cat-tile.on .cat-ic { background: rgba(10,22,38,.18); color: #0A1626; }
+
+@media (max-width: 560px) { .cat-tile { width: 104px; } }
+
+
+/* ------------------------------------------------- offline holdings
+   Figures set large and at a single size, so the scale of what is
+   bundled reads before any label does. */
+/* An illustrated band behind the figures: layered arcs in the accent,
+   the way the reference sets a scene behind its banner. Drawn in CSS so
+   it costs nothing to ship and recolours with the theme. */
+.holdings {
+  position: relative; overflow: hidden;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r4);
+  box-shadow: var(--sh-1);
+  padding: var(--s5);
+  margin-bottom: var(--s5);
+}
+.holdings::before {
+  content: ""; position: absolute; right: -6%; top: -58%;
+  width: 46%; aspect-ratio: 1; border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%,
+      transparent 38%, color-mix(in srgb, var(--accent) 9%, transparent) 39%,
+      color-mix(in srgb, var(--accent) 9%, transparent) 52%, transparent 53%),
+    radial-gradient(circle at 50% 50%,
+      transparent 62%, color-mix(in srgb, var(--accent) 7%, transparent) 63%,
+      color-mix(in srgb, var(--accent) 7%, transparent) 74%, transparent 75%);
+  pointer-events: none;
+}
+.holdings::after {
+  content: ""; position: absolute; left: -4%; bottom: -46%;
+  width: 34%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in srgb, #0EA5E9 11%, transparent), transparent 66%);
+  pointer-events: none;
+}
+.holdings > * { position: relative; z-index: 1; }
+.holdings-head {
+  display: flex; align-items: center; gap: var(--s3);
+  margin-bottom: var(--s4);
+}
+.holdings-head h2 {
+  margin: 0; font-size: var(--t-lg); font-weight: 620;
+  letter-spacing: -.2px; color: var(--fg);
+}
+.holdings-head .badge { margin-left: auto; }
+.holdings-row {
+  display: grid; gap: var(--s4) var(--s5);
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+}
+.hold { min-width: 0; }
+.hold-n {
+  font-size: 30px; font-weight: 690; letter-spacing: -1.1px;
+  line-height: 1.1; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(160deg, var(--fg) 20%, var(--accent) 190%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* The gradient is applied to the glyphs; if a browser will not clip
+   background to text the colour above still shows through. */
+@supports not (-webkit-background-clip: text) {
+  .hold-n { -webkit-text-fill-color: currentColor; }
+}
+.hold-k { margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--fg-1); }
+.hold-s { font-size: 11.5px; color: var(--fg-3); line-height: 1.45; }
+
+/* ------------------------------------------------- floating dock
+   Hidden by default; only earns its place where the sidebar is gone. */
+.dock { display: none; }
+
+@media (max-width: 900px) {
+  .dock {
+    position: fixed; z-index: 60;
+    left: 50%; transform: translateX(-50%);
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    display: flex; gap: 4px; padding: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg-1) 82%, transparent);
+    border: 1px solid var(--line-2);
+    box-shadow: var(--sh-3);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  }
+  .dock-b {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-width: 68px; padding: 7px 12px 6px;
+    border: 0; background: transparent; cursor: pointer;
+    border-radius: 999px; color: var(--fg-2);
+    font: 600 10.5px/1.2 var(--sans);
+    transition: background .15s, color .15s;
+  }
+  .dock-b:hover, .dock-b:focus-visible { background: var(--bg-3); color: var(--fg); text-decoration: none; }
+  .dock-b .ic { margin-bottom: 1px; }
+  /* clear the bar so it never covers the last row of content */
+  .main .wrap { padding-bottom: calc(var(--s8) + 24px); }
+}
 
 /* ============================================================ palette */
 
@@ -805,31 +1130,24 @@ code.inl {
 
 /* ============================================================ responsive */
 
-.menu-btn { display: none; }
 
 @media (max-width: 900px) {
-  .app { flex-direction: column; height: auto; overflow: visible; }
-  .sidebar {
-    width: 100%; flex: none; border-right: 0;
-    border-bottom: 1px solid var(--line);
-    position: sticky; top: 0; z-index: 40;
-  }
-  .sidebar .nav.sidebar .side-search.sidebar .side-foot { display: none; }
-  .sidebar.open .nav { display: block; max-height: 60vh; }
-  .sidebar.open .side-search { display: block; }
-  .sidebar.open .side-foot { display: flex; }
-  .menu-btn { display: inline-flex; margin-left: auto; }
-  .brand { border-bottom: 0; }
-  .sidebar.open .brand { border-bottom: 1px solid var(--line); }
-  .main { overflow: visible; }
   .wrap { padding: var(--s5) var(--s4) var(--s7); }
-  .hero h1 { font-size: 26px; letter-spacing: -.7px; }
+  .hero { padding: var(--s6) var(--s4) var(--s5); }
+  .hero h1 { font-size: 30px; letter-spacing: -1px; }
   .tool-head h1 { font-size: 23px; }
-  .kv { grid-template-columns: 1fr; gap: 2px var(--s3); }
-  .kv dt { margin-top: 10px; }
+  /* Stacked, the label sits directly above its value, so only the label
+     carries the separating rule or every pair would be boxed in. */
+  .kv { grid-template-columns: 1fr; gap: 0; }
+  .kv dt { padding: 9px 0 1px; border-top: 1px solid var(--line); }
+  .kv dd { padding: 0 0 9px; border-top: 0; }
+  .kv dt:first-of-type { border-top: 0; padding-top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cat-tile:hover { transform: none; }
+  .cat-tile:hover .cat-ic { transform: none; }
+  .tool-card:hover { transform: none; }
   *, *::before, *::after {
     animation: none !important;
     transition-duration: .01ms !important;
@@ -837,7 +1155,6 @@ code.inl {
 }
 
 @media print {
-  .sidebar.tbl-toolbar.btn.toast-host.cmdk-veil.lang-switch { display: none !important; }
   body.card { background: #fff; color: #000; box-shadow: none; }
   .card { border: 1px solid #ddd; break-inside: avoid; }
   .main { overflow: visible; }

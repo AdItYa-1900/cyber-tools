@@ -88,11 +88,9 @@
       var DB = null, mode = "browse", results = [], centre = null;
 
       root.innerHTML =
-        '<div class="note warn"><b>Read this before relying on a nil result</b>' +
-        "<p>No complete public list of Indian police stations exists. This uses the best " +
-        "open source there is, OpenStreetMap. It maps a few thousand of roughly seventeen thousand " +
-        "stations, and covers cities far better than villages. <b>A station missing here may still " +
-        "exist.</b> Import your state's own list below to fill the gaps.</p></div>" +
+        '<div class="note warn">This list is incomplete: it covers a few thousand of roughly ' +
+        "seventeen thousand stations, and cities better than villages. <b>A station missing here may " +
+        "still exist.</b> Import your state's own list below to fill the gaps.</div>" +
 
         '<div class="card"><div class="row" style="justify-content:space-between">' +
           '<div class="seg" id="ps-mode">' +

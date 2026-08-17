@@ -19,11 +19,6 @@
     badges: ["BNSS 2023", "BSA 2023", "Needs local vetting"],
     render: function (root) {
       root.innerHTML =
-        '<div class="note danger"><b>Training material, not legal advice</b>' +
-        "<p>This reflects the BNSS / BSA / BNS regime that replaced the CrPC, Evidence Act and IPC from " +
-        "1 July 2024, and the Telecommunications Act 2023 which is replacing the Telegraph Act in phases. " +
-        "Provisions, authorised ranks and state standing orders change, and they differ between states. " +
-        "<b>Have your prosecution wing vet every row before it goes into a real notice.</b></p></div>" +
 
         '<div class="card"><h3>Retention, why order of work matters</h3>' +
         '<p class="small muted">Request in the order things disappear, not in the order they occur to you.</p>' +
@@ -275,10 +270,7 @@ v.subjects.map(function (s) { return "        " + s; }).join("\n") + "\n\n" +
         $("#t-out").innerHTML = '<div class="copyable"><pre class="out doc">' + esc(body) +
           '</pre><button class="btn sm copybtn" data-copy="prev">Copy</button></div>' +
           '<div class="row" style="margin-top:10px"><button class="btn" id="t-dl">Download .txt</button>' +
-          '<button class="btn ghost" id="t-print">Print</button></div>' +
-          '<div class="note warn" style="margin-top:12px"><b>Before you sign</b><p>Check the authorised rank ' +
-          "for this category in your state's standing order, confirm the provision is current, and make sure " +
-          "every ask is within what that provision permits.</p></div>";
+          '<button class="btn ghost" id="t-print">Print</button></div>';
 
         $("#t-dl").onclick = function () {
           TK.download("requisition-" + $("#t-kind").value + ".txt", body, "text/plain");
@@ -308,11 +300,8 @@ v.subjects.map(function (s) { return "        " + s; }).join("\n") + "\n\n" +
     },
     render: function (root) {
       root.innerHTML =
-        '<div class="note info"><b>Where these contacts come from</b>' +
-        "<p>Compiled from the nodal officer export generated <b>16-08-2026</b>, plus the State/UT cyber-cell " +
-        "and grievance officers published on cybercrime.gov.in. Addresses are present on only about a fifth " +
-        "of the rows because the source does not carry them for everyone, a blank means the source is blank, " +
-        "not that parsing failed. Officers move often, so confirm a contact before relying on it.</p></div>" +
+        '<p class="small muted">From the official nodal export of 16-08-2026 and cybercrime.gov.in. ' +
+        'Officers move often, so confirm a contact before you rely on it.</p>' +
 
         '<div class="card"><div class="row" style="justify-content:space-between">' +
           '<div class="searchbox grow" style="max-width:340px">' +

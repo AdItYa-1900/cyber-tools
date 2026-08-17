@@ -146,11 +146,8 @@
         });
 
         if (valid.length) {
-          out += '<div class="note warn"><b>Before you write "operator: X" in the case diary</b>' +
-            "<p>Mobile Number Portability means the allocated series and the serving network diverge " +
-            "constantly. The only authoritative answer to <i>who serves this number today</i> comes from " +
-            "the operator or the MNP clearing house. Series lookup narrows where to send the notice; " +
-            "it does not close the question.</p></div>";
+          out += '<p class="small muted">Numbers get ported, so the series shows who was allocated ' +
+            "the number, not who serves it today. Only the operator or the MNP clearing house can confirm that.</p>";
 
           var nums = valid.map(function (r) { return r.national; });
           out += '<div class="card"><h3>Requisition text</h3>' +
@@ -260,10 +257,6 @@
             "</div></div>";
         }).join("") + "</div></div>" +
 
-        '<div class="note info"><b>Consolidation changes what an old CDR means</b>' +
-        "<p>Aircel, Reliance Communications, Tata Docomo, Telenor and MTS have all closed. A 2017 CDR " +
-        "can carry an operator code with no surviving nodal officer. Those requests go to the resolution " +
-        "professional or the company that bought them. Establish that before assuming the record is gone.</p></div>";
 
       TK.table($("#lsa-tbl"), rows, [
         { k: "c", label: "Code", cls: "mono" },
@@ -525,10 +518,6 @@
 
         out += '<div class="card"><h3>All records</h3><div id="caf-tbl"></div></div>';
 
-        out += '<div class="note info"><b>What to ask for next</b><p>For every flagged identity document: ' +
-          "the scanned KYC image and the biometric/e-KYC audit trail; all other connections against the same " +
-          "document across <i>all</i> operators; the PoS agent's own KYC; and the first-call and first-recharge " +
-          "details, which frequently expose the real user rather than the registered subscriber.</p></div>";
 
         $("#caf-out").innerHTML = out;
 
@@ -605,9 +594,8 @@
       }
 
       root.innerHTML =
-        '<div class="note danger"><b>Read this first</b><p>Nothing on this page talks to UIDAI. It is ' +
-        "arithmetic. A number can pass the checksum and never have been issued to anybody. Use the " +
-        "generator below for training data, do not type a real number into any field on this page.</p></div>" +
+        '<div class="note danger">This page never contacts UIDAI. It only checks the maths, so a number ' +
+        "can pass and still have been issued to nobody. Do not type a real Aadhaar number here.</div>" +
 
         '<div class="card"><h3>Check a synthetic number</h3>' +
           '<div class="field"><label class="lbl">12-digit test number</label>' +

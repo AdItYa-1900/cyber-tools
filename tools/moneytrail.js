@@ -536,12 +536,7 @@
             "<li>Similar dates or descriptions alone</li>" +
             "<li>Round-amount coincidences (₹50,000)</li>" +
             "<li>IFSC codes, an entity, not a transaction id</li>" +
-            "<li>Masked account numbers</li></ul></div></div>" +
-          '<div class="note accent" style="margin-top:14px"><b>Why the strictness matters</b>' +
-          "<p>Every arrow here can be proved. You can point to the same reference number in both statements, and " +
-          "the bank can confirm it. Matching on amount alone falls apart the moment the defence " +
-          "finds two unrelated transfers of ₹50,000 on the same day. Use <b>Common entities</b> for looser " +
-          "pattern hunting.</p></div></div>";
+            "<li>Masked account numbers</li></ul></div></div></div>";
       }
 
       /* ---- transactions ---- */

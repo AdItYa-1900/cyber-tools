@@ -190,10 +190,6 @@
           "<dt>Message-ID</dt><dd>" + esc(first(hs, "message-id")) + "</dd>" +
           "</dl></div>";
 
-        out += '<div class="note info"><b>What to do next</b><p>Requisition the originating IP from its ' +
-          "network owner for subscriber details, with the exact timestamp and timezone. Send a preservation " +
-          "request to the mail provider for the account and its login IPs. If a domain is involved, preserve " +
-          "its registration record now, before it is taken down.</p></div>";
 
         $("#mh-out").innerHTML = out;
       }
@@ -273,9 +269,8 @@
             ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][ist.getUTCDay()] +
             " (IST)</dd>" +
           "</dl>" +
-          '<div class="note accent" style="margin-top:14px"><b>For your requisition</b>' +
-          "<p>State it as <span class='mono'>" + esc(fmt(ist)) + " IST</span> and say so explicitly. " +
-          "Never write a bare time without its timezone.</p></div>";
+          '<p class="small muted" style="margin-top:14px">Write it as <span class="mono">' +
+          esc(fmt(ist)) + " IST</span>. Never give a time without its timezone.</p>";
         TK.animateStats(el);
       }
 

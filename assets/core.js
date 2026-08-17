@@ -165,7 +165,7 @@
     TK.lang = l;
     try { localStorage.setItem("tk-lang", l); } catch (e) {}
     document.documentElement.setAttribute("lang", l === "hi" ? "hi" : "en");
-    buildNav();
+    refreshChrome();
     route();
   };
 
@@ -284,6 +284,18 @@
    * on.", blank rows, disclaimer) before the true header row. We score every
    * early row and pick the one that looks most like a header.
    */
+  /* splitLine already resolves CSV quoting, so a quote still present here
+     is part of the value. Strip only a genuinely matched pair, or a
+     narration like PAYMENT FOR "CONSULTANCY" loses its closing quote. */
+  function unquote(v) {
+    v = String(v == null ? "" : v);
+    if (v.length > 1) {
+      var a = v.charAt(0), b = v.charAt(v.length - 1);
+      if ((a === '"' || a === "'") && a === b) v = v.slice(1, -1);
+    }
+    return v.trim();
+  }
+
   TK.parseTable = function (text, opts) {
     opts = opts || {};
     text = text.replace(/^﻿/, "");
@@ -329,7 +341,7 @@
         if (g.length < Math.max(2, modalN * 0.5)) return;
         var o = {}, filled = 0;
         for (var k0 = 0; k0 < synth.length; k0++) {
-          var v0 = (g[k0] || "").replace(/^["']|["']$/g, "").trim();
+          var v0 = unquote(g[k0]);
           o[synth[k0]] = v0;
           if (v0 !== "") filled++;
         }
@@ -344,7 +356,7 @@
     }
 
     var headers = grids[hIdx].map(function (h, i) {
-      h = h.replace(/^["']|["']$/g, "").trim();
+      h = unquote(h);
       return h || "col" + (i + 1);
     });
     // de-duplicate header names
@@ -362,14 +374,22 @@
       if (g2.length < modalN * 0.5) { skipped++; continue; }
       var o = {}, filledN = 0;
       for (var k = 0; k < headers.length; k++) {
-        var v = (g2[k] || "").replace(/^["']|["']$/g, "").trim();
+        var v = unquote(g2[k]);
         o[headers[k]] = v;
         if (v !== "") filledN++;
       }
       if (!filledN) { skipped++; continue; }
-      // Footer/total rows keep the full column count but fill only a cell or
-      // two ("Total Records,420,,,"). A real data row is mostly populated.
-      if (filledN <= Math.max(2, modalN * 0.4)) { skipped++; continue; }
+      /* Footer/total rows keep the full column count but fill only a cell
+         or two ("Total Records,420,,,"). A real data row is mostly
+         populated.
+
+         The `filledN < modalN` guard matters: without it the absolute
+         floor of 2 rejects every row of a two-column file, because a
+         fully populated row there fills exactly 2 cells. Two-column
+         imports are common (cell id to tower, IMEI to model, hash
+         lists), and they were being emptied silently. A row that fills
+         every column it has is data, whatever the column count. */
+      if (filledN < modalN && filledN <= Math.max(2, modalN * 0.4)) { skipped++; continue; }
       rows.push(o);
     }
 
@@ -760,23 +780,19 @@
     var total = TK.order.length;
     var hi = TK.lang === "hi";
 
-    var h = '<div class="wrap"><div class="hero">' +
+    var h = '<div class="wrap"><div class="hero-stack"><div class="hero">' +
       '<span class="eyebrow">' + esc(TK.t("brandSub")) + "</span>" +
-      "<h1>" + (hi ? "हर उपकरण, एक ही जगह।" : "Every tool, one workspace.") + "</h1>" +
+      "<h1>" + (hi ? "हर उपकरण, चंद सेकंड में।" : "Every tool, in seconds.") + "</h1>" +
       "<p>" + (hi
-        ? total + " उपकरण साइबर अपराध अन्वेषण के लिए, उसी सवाल के अनुसार समूहबद्ध जिसका जवाब आप ढूँढ रहे हैं। " +
-          "सब कुछ इसी ब्राउज़र में चलता है। आपकी फ़ाइलें इसी कंप्यूटर पर पढ़ी जाती हैं, कहीं भेजी नहीं जातीं।"
-        : total + " tools for cyber-crime investigation, grouped by the question you are actually trying " +
-          "to answer. Everything runs in this browser. Evidence files you load are read on this machine " +
-          "and never leave it.") + "</p>" +
+        ? total + " उपकरण, प्रश्न के अनुसार समूहबद्ध। सब कुछ इसी कंप्यूटर पर चलता है।"
+        : total + " tools, grouped by the question they answer. Everything runs on this machine.") + "</p>" +
       '<div class="hero-search">' +
         '<input type="search" id="home-search" placeholder="' + esc(TK.t("searchAll")) +
         '" autocomplete="off" spellcheck="false">' +
-      "</div></div>";
+      "</div></div></div>";
 
-    h += '<div class="note accent" style="margin-bottom:var(--s5)"><b>' + esc(TK.t("needHelp")) + "</b>" +
-      "<p>" + esc(TK.t("helpLine")) + "</p></div>";
-
+    h += '<div id="home-cats">' + categoryTiles(clusterCounts()) + "</div>";
+    h += holdingsCard();
     h += '<div id="home-results">' + clusterGrid("") + "</div>";
 
     h += '<div class="note warn" style="margin-top:var(--s6)"><b>' +
@@ -793,9 +809,25 @@
 
     animateStats(main);
     var box = $("#home-search");
-    box.addEventListener("input", function () {
+
+    function repaint() {
       $("#home-results").innerHTML = clusterGrid(box.value.trim().toLowerCase());
-    });
+      $("#home-cats").innerHTML = categoryTiles(clusterCounts());
+      wireTiles();
+    }
+    function wireTiles() {
+      wireTilt($("#home-cats .cat-row"));
+      $$("#home-cats .cat-tile").forEach(function (b) {
+        b.onclick = function () {
+          var c = b.getAttribute("data-cat");
+          homeFilter = homeFilter === c ? "" : c;   // a second press clears it
+          repaint();
+        };
+      });
+    }
+    wireTiles();
+
+    box.addEventListener("input", repaint);
     box.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         var first = $("#home-results .tool-card");
@@ -804,10 +836,100 @@
     });
   }
 
+  /* The category tile currently selected, or "" for all. Kept at module
+     scope so re-rendering the grid on a keystroke does not lose it. */
+  var homeFilter = "";
+
+
+  /* What is bundled and answerable with no network. Fixed at build time,
+     because loading the real tables to count them would pull roughly
+     20 MB into the home page purely to print a number. Regenerate these
+     alongside the data files. */
+  TK.HOLDINGS = [
+    { n: 248359, k: "Device codes",   sub: "IMEI to make and model" },
+    { n: 182757, k: "Bank branches",  sub: "IFSC, branch and MICR" },
+    { n: 58415,  k: "Hardware IDs",   sub: "IEEE MAC registry" },
+    { n: 10186,  k: "Nodal officers", sub: "Banks, wallets, exchanges" },
+    { n: 3801,   k: "Police stations", sub: "State and district" },
+    { n: 688,    k: "Toll plazas",    sub: "NHAI, with contacts" }
+  ];
+
+  function holdingsCard() {
+    var hi = TK.lang === "hi";
+    return '<section class="holdings">' +
+      '<div class="holdings-head">' +
+        "<h2>" + (hi ? "बिना नेटवर्क उपलब्ध" : "Available with no network") + "</h2>" +
+        '<span class="badge ok">' + (hi ? "ऑफ़लाइन" : "Offline") + "</span>" +
+      "</div>" +
+      '<div class="holdings-row">' + TK.HOLDINGS.map(function (h) {
+        return '<div class="hold">' +
+          '<div class="hold-n">' + TK.fmtNum(h.n) + "</div>" +
+          '<div class="hold-k">' + esc(h.k) + "</div>" +
+          '<div class="hold-s">' + esc(h.sub) + "</div>" +
+        "</div>";
+      }).join("") + "</div></section>";
+  }
+
+
+  /* Writes --rx/--ry on whichever tile the pointer is over. One listener
+     for the row, and the values come from the event and the tile's own
+     cached rect, so moving the pointer does not force layout. */
+  function wireTilt(row) {
+    if (!row || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var MAX = 7;
+    row.addEventListener("pointermove", function (e) {
+      var t = e.target.closest(".cat-tile");
+      if (!t) return;
+      var r = t.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - 0.5;
+      var py = (e.clientY - r.top) / r.height - 0.5;
+      t.style.setProperty("--ry", (px * MAX).toFixed(2) + "deg");
+      t.style.setProperty("--rx", (-py * MAX).toFixed(2) + "deg");
+    });
+    row.addEventListener("pointerleave", function () {
+      $$(".cat-tile", row).forEach(function (t) {
+        t.style.removeProperty("--rx");
+        t.style.removeProperty("--ry");
+      });
+    }, true);
+  }
+
+  function categoryTiles(counts) {
+    var total = TK.order.length;
+    var tiles = '<button class="cat-tile' + (homeFilter ? "" : " on") +
+      '" data-cat="" aria-pressed="' + (homeFilter ? "false" : "true") + '">' +
+      '<span class="cat-ic all">' + TK.icon("search", 19) + "</span>" +
+      '<span class="cat-name">' + esc(TK.t("home")) + "</span>" +
+      '<span class="cat-n">' + total + "</span></button>";
+
+    TK.clusters.forEach(function (raw) {
+      var cl = TK.cluster(raw.id);
+      var n = counts[cl.id] || 0;
+      if (!n) return;
+      var on = homeFilter === cl.id;
+      tiles += '<button class="cat-tile' + (on ? " on" : "") + '" data-cat="' + esc(cl.id) +
+        '" aria-pressed="' + (on ? "true" : "false") + '">' +
+        '<span class="cat-ic" style="color:' + cl.color + '">' + TK.icon(cl.id, 19) + "</span>" +
+        '<span class="cat-name">' + esc(cl.name) + "</span>" +
+        '<span class="cat-n">' + n + "</span></button>";
+    });
+    return '<div class="cat-row">' + tiles + "</div>";
+  }
+
+  function clusterCounts() {
+    var counts = {};
+    TK.order.forEach(function (id) {
+      var c = TK.tools[id].cluster;
+      counts[c] = (counts[c] || 0) + 1;
+    });
+    return counts;
+  }
+
   function clusterGrid(q) {
     var out = "", hits = 0;
     TK.clusters.forEach(function (raw) {
       var cl = TK.cluster(raw.id);
+      if (homeFilter && cl.id !== homeFilter) return;
       var ids = TK.order.filter(function (id) {
         var t = TK.tool(id);
         if (t.cluster !== cl.id) return false;
@@ -818,12 +940,18 @@
       out += '<section class="cluster"><div class="cluster-head">' +
         '<h2><span class="cl-ic" style="color:' + cl.color + '">' + TK.icon(cl.id, 15) +
         "</span>" + esc(cl.name) + "</h2>" +
-        '<span class="q">' + esc(cl.q) + "</span></div>" +
+        '<span class="q">' + esc(cl.q) + "</span>" +
+        '<span class="cl-count">' + ids.length + "</span></div>" +
         '<div class="tool-grid">' + ids.map(function (id) {
           var t = TK.tool(id);
-          return '<a class="tool-card" href="#/' + id + '"><div class="tc-top">' +
-            '<span class="tc-name">' + esc(t.name) + "</span></div>" +
-            '<div class="tc-desc">' + esc(t.desc) + "</div></a>";
+          return '<a class="tool-card" href="#/' + id + '">' +
+            '<span class="tc-ic" style="color:' + cl.color + '">' + TK.icon(cl.id, 15) + "</span>" +
+            '<span class="tc-body"><span class="tc-name">' + esc(t.name) + "</span>" +
+            '<span class="tc-desc">' + esc(t.desc) + "</span></span>" +
+            '<span class="tc-go" aria-hidden="true">' +
+              '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" ' +
+              'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M6 3.5 10.5 8 6 12.5"/></svg></span></a>';
         }).join("") + "</div></section>";
     });
     return hits ? out : TK.empty(TK.t("noResults"), "∅");
@@ -835,13 +963,9 @@
     var hash = location.hash.replace(/^#\/?/, "");
     var id = hash.split("?")[0];
 
-    $$(".nav a").forEach(function (a) {
-      a.classList.toggle("active", a.getAttribute("href") === "#/" + id);
-    });
-
     main.scrollTop = 0;
 
-    if (!id) { document.title = TK.t("brand"); return renderHome(main); }
+    if (!id) { document.title = TK.t("brand"); homeFilter = ""; return renderHome(main); }
 
     var t = TK.tools[id];
     if (!t) {
@@ -898,27 +1022,17 @@
     }
   }
 
-  /* ---------------------------------------------------- sidebar */
+  /* ---------------------------------------------------- top bar */
 
-  function buildNav() {
-    var nav = $(".nav");
-    nav.innerHTML = TK.clusters.map(function (raw) {
-      var cl = TK.cluster(raw.id);
-      var ids = TK.order.filter(function (id) { return TK.tools[id].cluster === cl.id; });
-      if (!ids.length) return "";
-      return '<div class="nav-group" data-cluster="' + cl.id + '">' +
-        '<h4><span class="cl-ic" style="color:' + cl.color + '">' + TK.icon(cl.id, 13) +
-        "</span>" + esc(cl.name) + "</h4>" +
-        ids.map(function (id) {
-          var t = TK.tool(id);
-          return '<a href="#/' + id + '" data-name="' + esc((t.name + " " + t.desc).toLowerCase()) + '">' +
-            "<span>" + esc(t.name) + "</span></a>";
-        }).join("") + "</div>";
-    }).join("");
-
-    var b = $(".brand-name"), s = $(".brand-sub"), q = $("#nav-search"), lk = $(".side-foot .lock");
+  /* The tool list that used to live here is gone: the home page groups
+     the same 34 tools by cluster and filters them, and the palette
+     searches them by name. This only refreshes the strings that sit in
+     the bar itself, so a language switch updates them in place. */
+  function refreshChrome() {
+    var b = $(".brand-name"), sb = $(".brand-sub"),
+        q = $("#nav-search"), lk = $(".topbar .lock");
     if (b) b.textContent = TK.t("brand");
-    if (s) s.textContent = TK.t("brandSub");
+    if (sb) sb.textContent = TK.t("brandSub");
     if (q) q.placeholder = TK.t("search");
     if (lk) lk.textContent = TK.t("runsLocal");
   }
@@ -1034,18 +1148,6 @@
     });
   }
 
-  function wireMobileNav() {
-    var btn = $("#menu-btn"), side = $(".sidebar");
-    if (!btn) return;
-    btn.addEventListener("click", function () {
-      var open = side.classList.toggle("open");
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-    $(".nav").addEventListener("click", function (e) {
-      if (e.target.closest("a")) side.classList.remove("open");
-    });
-  }
-
   /* Light is the default. Dark is the opt-in override, so an untouched
      install opens in the light theme the design was drawn for. */
   function wireTheme() {
@@ -1089,10 +1191,41 @@
     }).observe($(".main"), { childList: true, subtree: true });
   }
 
+
+  /* Fixed bottom bar. Only visible under 900px, where the sidebar is
+     collapsed behind the Menu button and navigating otherwise means
+     scrolling back to the top of the page. */
+  function buildDock() {
+    var dock = document.createElement("nav");
+    dock.className = "dock";
+    dock.setAttribute("aria-label", TK.t("home"));
+    dock.innerHTML =
+      '<a class="dock-b" href="#/" data-d="home">' + TK.icon("identity", 19) +
+        "<span>" + esc(TK.t("home")) + "</span></a>" +
+      '<button class="dock-b" data-d="search">' + TK.icon("search", 19) +
+        "<span>" + esc(TK.t("search").replace(/[.…]+$/, "")) + "</span></button>" +
+      '<button class="dock-b" data-d="top">' + TK.icon("upload", 19) +
+        "<span>" + (TK.lang === "hi" ? "ऊपर" : "Top") + "</span></button>";
+    document.body.appendChild(dock);
+
+    dock.addEventListener("click", function (e) {
+      var b = e.target.closest(".dock-b");
+      if (!b) return;
+      var d = b.getAttribute("data-d");
+      if (d === "search") { e.preventDefault(); openPalette(); }
+      else if (d === "top") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        var m = $(".main");
+        if (m) m.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+  }
+
   TK.boot = function () {
-    buildNav();
+    buildDock();
+    refreshChrome();
     wireSearch();
-    wireMobileNav();
     wireTheme();
     watchStats();
     window.addEventListener("hashchange", function () { closePalette(); route(); });

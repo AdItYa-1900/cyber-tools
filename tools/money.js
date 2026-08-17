@@ -441,10 +441,6 @@
 
         out += '<div class="card"><h3>All transactions</h3><div id="tr-all"></div></div>';
 
-        out += '<div class="note info"><b>Closing the loop</b><p>Take the registered mobile from the KYC and ' +
-          "run it through Number Intelligence, then requisition its CDR. If that number also appears in your " +
-          "suspect's contact list, or in the Common Contact Finder output, you have joined the money trail to " +
-          "the phone trail, which is what converts a set of suspicious transfers into a chargeable conspiracy.</p></div>";
 
         $("#tr-out").innerHTML = out;
 

@@ -341,12 +341,24 @@
             '<span style="color:var(--accent)">' + (matched ? hex.slice(0, matched.length).match(/./g).join(":") : hex.slice(0, 6).match(/./g).join(":")) + "</span>" +
             '<span style="color:var(--fg-2)">:' + (matched ? hex.slice(matched.length) : hex.slice(6)).match(/./g).join(":") + "</span></div>";
 
+          /* A locally-administered address was not assigned by IEEE to
+             anyone, so any registry row it happens to collide with is a
+             coincidence. Naming a vendor here invites exactly the wrong
+             attribution, so the field says so instead. */
+          var attributable = !local;
+
           card += '<dl class="kv">' +
             "<dt>Normalised</dt><dd>" + canon + "</dd>" +
-            "<dt>Vendor</dt><dd>" + (vendor ? TK.esc(vendor) : "<span class='muted'>not in the IEEE registry</span>") + "</dd>" +
-            (vendor ? "<dt>Block type</dt><dd>" + TK.esc(reg) +
+            "<dt>Vendor</dt><dd>" + (!attributable
+              ? "<span class='muted'>not attributable, this address was not assigned by IEEE</span>"
+              : vendor ? TK.esc(vendor)
+              : "<span class='muted'>not in the IEEE registry</span>") + "</dd>" +
+            (attributable && vendor ? "<dt>Block type</dt><dd>" + TK.esc(reg) +
               (reg === "MA-M" ? " (28-bit, vendor shares the OUI)" :
-               reg === "MA-S" ? " (36-bit, small assignment)" : " (24-bit OUI)") + "</dd>" : "") +
+               reg === "MA-S" ? " (36-bit, small assignment)" :
+               reg === "IAB" ? " (individual address block)" :
+               reg === "CID" ? " (company id, not for burned-in addresses)" :
+               " (24-bit OUI)") + "</dd>" : "") +
             "<dt>I/G bit</dt><dd>" + (multicast ? "1, group / multicast frame" : "0, individual address") + "</dd>" +
             "<dt>U/L bit</dt><dd>" + (local ? "1, locally administered" : "0, universally administered (burned in)") + "</dd>" +
           "</dl>";
@@ -356,7 +368,10 @@
               "<p>The locally-administered bit is set, so this was not assigned by IEEE to any vendor. " +
               "iOS 14+ and Android 10+ generate a fresh random MAC per network by default, and rotate it. " +
               "This address identifies a session, not a device, and the same handset will appear under a " +
-              "different address on the next network. Do not attribute it to a manufacturer.</p></div>";
+              "different address on the next network. Do not attribute it to a manufacturer.</p>" +
+              (vendor ? "<p>For completeness: the opening digits coincide with an IEEE block held by <b>" +
+                TK.esc(vendor) + "</b>. That is a coincidence of the random draw and is not evidence " +
+                "the device was made by them.</p>" : "") + "</div>";
           }
           if (multicast) {
             card += '<div class="note info" style="margin-top:12px"><b>Not a device address</b>' +
@@ -397,11 +412,6 @@
     },
     render: function (root) {
       root.innerHTML =
-        '<div class="note warn"><b>Two different things called "CEIR"</b>' +
-        "<p><b>The citizen portal</b> lets a victim report a lost handset and get it blocked, and lets anyone " +
-        "check make/model/blacklist status by SMS to 14422. <b>The police channel</b> is a separate authenticated " +
-        "route through your state nodal officer for tracing. Only the second one answers <i>which SIM is in " +
-        "that handset now</i>, and it is not something a browser tool can reach.</p></div>" +
 
         '<div class="card"><h3>Which route do you need?</h3><div class="grid c3">' +
           ['{"t":"Victim wants it blocked","d":"Citizen files on the CEIR portal with the FIR copy and the purchase invoice. Blocks it across all Indian networks. Do this only when you have decided you do not need the device generating traffic.","k":"warn"}',

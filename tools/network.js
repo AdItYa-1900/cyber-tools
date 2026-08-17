@@ -276,6 +276,188 @@
         return (toInt(ip) & mask) >>> 0 === (toInt(parts[0]) & mask) >>> 0;
       }
 
+
+      /* ---- RDAP routing -------------------------------------------
+         IANA publishes which registry is authoritative for each IP
+         range and each TLD. With that bundled the lookup goes straight
+         to the right registry, instead of asking a redirect service to
+         work it out and paying a second round trip for the answer. */
+      /* Six seconds. A healthy registry answers in about 200 ms, so
+         anything past this is a registry in trouble, and an officer
+         staring at a spinner needs to be told that rather than made to
+         wait longer on the chance it recovers. */
+      var RDAP_TIMEOUT = 6000;
+      var RDAP_CACHE = {};
+      var rdapTicker = null;
+
+      /* An indefinite spinner reads as a hung page. A counting one
+         reads as work in progress, and names who is being waited on. */
+      function rdapWaiting(slot, registry) {
+        var t0 = Date.now();
+        if (rdapTicker) clearInterval(rdapTicker);
+        function paint() {
+          var secs = ((Date.now() - t0) / 1000).toFixed(1);
+          slot.innerHTML = '<span class="row tight xs muted"><span class="spinner"></span> ' +
+            "querying " + esc(registry) + "… " + secs + "s</span>";
+        }
+        paint();
+        rdapTicker = setInterval(paint, 100);
+      }
+      function rdapDone() {
+        if (rdapTicker) { clearInterval(rdapTicker); rdapTicker = null; }
+      }
+
+      function ipToInt(ip) {
+        var p = ip.split(".").map(Number);
+        return ((p[0] << 24) >>> 0) + (p[1] << 16) + (p[2] << 8) + p[3];
+      }
+
+      function rdapRoute(value, isIP4, isIP6, host) {
+        var B = window.RDAP_BOOT;
+        var fallback = isIP4 || isIP6
+          ? "https://rdap.org/ip/" + encodeURIComponent(value)
+          : "https://rdap.org/domain/" + encodeURIComponent(host);
+
+        if (!B) return { url: fallback, fallback: "", registry: "rdap.org" };
+
+        if (isIP4) {
+          var n = ipToInt(value), best = null, bestBits = -1;
+          B.v4.forEach(function (svc) {
+            svc[0].forEach(function (cidr) {
+              var parts = cidr.split("/"), bits = +parts[1];
+              var mask = bits === 0 ? 0 : (0xFFFFFFFF << (32 - bits)) >>> 0;
+              if (((n & mask) >>> 0) === ((ipToInt(parts[0]) & mask) >>> 0) && bits > bestBits) {
+                bestBits = bits; best = svc[1];
+              }
+            });
+          });
+          if (best) return { url: best + "ip/" + encodeURIComponent(value), fallback: fallback,
+                             registry: hostOf(best) };
+        } else if (isIP6) {
+          /* The v6 bootstrap prefixes are real CIDRs at varying lengths
+             (/12 through /23) and they overlap, so they have to be
+             compared bit for bit with the longest match winning. */
+          var addr = expandV6(value);
+          var v6best = null, v6bits = -1;
+          if (addr) {
+            B.v6.forEach(function (svc) {
+              svc[0].forEach(function (cidr) {
+                var pr = cidr.split("/"), bits = +pr[1];
+                var pre = expandV6(pr[0]);
+                if (pre && bits > v6bits && sharesPrefix(addr, pre, bits)) {
+                  v6bits = bits; v6best = svc[1];
+                }
+              });
+            });
+          }
+          if (v6best) return { url: v6best + "ip/" + encodeURIComponent(value), fallback: fallback,
+                               registry: hostOf(v6best) };
+        } else if (host) {
+          var tld = host.split(".").pop().toLowerCase(), found = null;
+          B.dns.forEach(function (svc) {
+            if (!found && svc[0].indexOf(tld) !== -1) found = svc[1];
+          });
+          if (found) return { url: found + "domain/" + encodeURIComponent(host), fallback: fallback,
+                              registry: hostOf(found) };
+        }
+        return { url: fallback, fallback: "", registry: "rdap.org" };
+      }
+
+      function hostOf(u) {
+        var m = String(u).match(/^https?:\/\/([^/]+)/);
+        return m ? m[1] : u;
+      }
+
+      /* An IPv6 address as eight 16-bit words, with "::" expanded.
+         Returns null for anything malformed rather than guessing. */
+      function expandV6(str) {
+        var s = String(str).toLowerCase().trim();
+        if (s.indexOf(":") === -1) return null;
+        var halves = s.split("::");
+        if (halves.length > 2) return null;
+        function words(part) {
+          if (!part) return [];
+          var out = [];
+          var chunks = part.split(":");
+          for (var i = 0; i < chunks.length; i++) {
+            if (chunks[i] === "") return null;
+            if (!/^[0-9a-f]{1,4}$/.test(chunks[i])) return null;
+            out.push(parseInt(chunks[i], 16));
+          }
+          return out;
+        }
+        var head = words(halves[0]);
+        var tail = halves.length === 2 ? words(halves[1]) : [];
+        if (head === null || tail === null) return null;
+        if (halves.length === 1) return head.length === 8 ? head : null;
+        var gap = 8 - head.length - tail.length;
+        if (gap < 1) return null;
+        var mid = [];
+        while (mid.length < gap) mid.push(0);
+        return head.concat(mid, tail);
+      }
+
+      /* Do two addresses agree on their first `bits` bits? */
+      function sharesPrefix(a, b, bits) {
+        for (var i = 0; i < 8 && bits > 0; i++) {
+          var take = Math.min(16, bits);
+          var mask = take === 16 ? 0xFFFF : (0xFFFF << (16 - take)) & 0xFFFF;
+          if ((a[i] & mask) !== (b[i] & mask)) return false;
+          bits -= take;
+        }
+        return true;
+      }
+
+      /* One attempt, with a hard abort. Without this a registry that
+         accepts the connection and then stalls leaves the spinner
+         running until the page is closed. */
+      function once(url, ms) {
+        var ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+        var timer = setTimeout(function () { if (ctl) ctl.abort(); }, ms);
+        var t0 = Date.now();
+        return fetch(url, {
+          headers: { "Accept": "application/rdap+json" },
+          signal: ctl ? ctl.signal : undefined
+        }).then(function (r) {
+          clearTimeout(timer);
+          if (!r.ok) return Promise.reject({ status: r.status });
+          return r.json().then(function (d) {
+            return { data: d, ms: Date.now() - t0, url: url, registry: hostOf(url) };
+          });
+        }, function (err) {
+          clearTimeout(timer);
+          return Promise.reject(
+            err && err.name === "AbortError" ? { timeout: true } : { network: true });
+        });
+      }
+
+      function rdapFetch(url, fallback) {
+        if (RDAP_CACHE[url]) {
+          var c = RDAP_CACHE[url];
+          return Promise.resolve({ data: c.data, ms: c.ms, url: url,
+                                   registry: c.registry, cached: true });
+        }
+        return once(url, RDAP_TIMEOUT).then(function (res) {
+          RDAP_CACHE[url] = res;
+          return res;
+        }, function (e) {
+          /* Only retry through the redirect service when the first
+             attempt failed in a way the redirect might route around: a
+             moved endpoint, a CORS refusal, a server error. If the
+             registry simply stopped responding, rdap.org resolves to
+             that same registry, so a second attempt buys nothing and
+             doubles the time the officer waits. */
+          var worthRetrying = fallback && e && (e.network || (e.status && e.status >= 500));
+          if (worthRetrying) {
+            return once(fallback, RDAP_TIMEOUT).then(function (res) {
+              RDAP_CACHE[url] = res;
+              return res;
+            });
+          }
+          return Promise.reject(e);
+        });
+      }
+
       function go() {
         var v = $("#ipi-in").value.trim();
         if (!v) return;
@@ -332,27 +514,25 @@
           out += '<div class="card"><div class="row" style="margin-bottom:12px">' +
             '<span class="mono" style="font-size:16px;font-weight:600">' + esc(v) + "</span>" +
             '<span class="badge accent">Domain</span></div>' +
-            '<div class="note warn"><b>Preserve before you investigate</b><p>Phishing domains are taken down ' +
-            "or abandoned within days. Capture the RDAP record and a full-page screenshot with a visible " +
-            "timestamp now, hash them, and only then start analysing. Do not visit the site from a police " +
-            "network.</p></div>" +
+            '<div class="note warn">Capture and hash the registration record and a screenshot now, ' +
+            "before the domain disappears. Do not open the site from a police network.</div>" +
             '<div id="ipi-rdap"><span class="row tight xs muted"><span class="spinner"></span> querying RDAP…</span></div></div>';
         }
 
-        out += '<div class="note info"><b>What an IP can and cannot establish</b><p>It can establish which ' +
-          "network held the address, and, with a lawful request to that network, which subscriber account " +
-          "was assigned it at a moment in time. It cannot establish who was sitting at the keyboard, and " +
-          "commercial geolocation cannot establish where they were. Both of those need corroboration from " +
-          "somewhere else in the case.</p></div>";
 
         $("#ipi-out").innerHTML = out;
 
-        var url = isIP4 || isIP6 ? "https://rdap.org/ip/" + encodeURIComponent(v)
-          : "https://rdap.org/domain/" + encodeURIComponent(v.replace(/^https?:\/\//, "").split("/")[0]);
+        var host = v.replace(/^https?:\/\//, "").split("/")[0];
+        var route = rdapRoute(v, isIP4, isIP6, host);
+        var url = route.url;
 
-        fetch(url, { headers: { "Accept": "application/rdap+json" } })
-          .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-          .then(function (d) {
+        var waitSlot = $("#ipi-rdap");
+        if (waitSlot) rdapWaiting(waitSlot, route.registry);
+
+        rdapFetch(url, route.fallback)
+          .then(function (res) {
+            rdapDone();
+            var d = res.data;
             var rows = [];
             if (d.name) rows.push(["Network name", d.name]);
             if (d.handle) rows.push(["Handle", d.handle]);
@@ -380,7 +560,10 @@
 
             var slot = $("#ipi-rdap");
             if (!slot) return;
-            slot.innerHTML = '<div class="note ok"><b>RDAP registration</b>' +
+            slot.innerHTML = '<div class="note ok"><b>Registry record</b>' +
+              '<p class="xs muted" style="margin:4px 0 0">Answered by <span class="mono">' +
+              esc(res.registry) + "</span> in " + res.ms + " ms" +
+              (res.cached ? ", from this session's cache" : "") + "</p>" +
               '<dl class="kv" style="margin-top:8px">' + rows.map(function (r) {
                 return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>";
               }).join("") + "</dl></div>" +
@@ -399,19 +582,30 @@
 
             $("#ipi-save").onclick = function () {
               TK.download("rdap-" + v.replace(/[^\w.]/g, "_") + ".json",
-                JSON.stringify({ queried: v, at: new Date().toISOString(), response: d }, null, 2),
+                JSON.stringify({ queried: v, at: new Date().toISOString(),
+                                 registry: res.url, response: d }, null, 2),
                 "application/json");
             };
           })
           .catch(function (e) {
+            rdapDone();
             var slot = $("#ipi-rdap");
             if (!slot) return;
-            slot.innerHTML = '<div class="note warn"><b>RDAP lookup unavailable</b>' +
-              "<p>" + (e === 404 ? "No registration record found for this value."
-                : "No network access, or the browser blocked the cross-origin request, which is common when " +
-                  "this page is opened directly from disk rather than served. The offline classification above " +
-                  "is unaffected.") + "</p>" +
-              '<p class="xs">Manual: <span class="mono">' + esc(url) + "</span></p></div>";
+            var why = e && e.timeout
+              ? "The registry did not answer within " + (RDAP_TIMEOUT / 1000) + " seconds. It may be " +
+                "rate-limiting or temporarily down. The offline classification above is unaffected."
+              : e === 404 || (e && e.status === 404)
+              ? "The registry has no record for this value."
+              : "No network access, or the browser blocked the cross-origin request, which is common " +
+                "when this page is opened directly from disk rather than served. The offline " +
+                "classification above is unaffected.";
+            slot.innerHTML = '<div class="note warn"><b>Registry lookup unavailable</b>' +
+              "<p>" + why + "</p>" +
+              '<p class="xs">Open manually: <span class="mono">' + esc(url) + "</span></p>" +
+              '<div class="row" style="margin-top:10px">' +
+              '<button class="btn sm" id="ipi-retry">Try again</button></div></div>';
+            var rb = $("#ipi-retry");
+            if (rb) rb.onclick = function () { delete RDAP_CACHE[url]; go(); };
           });
       }
     }

@@ -177,10 +177,8 @@
             ) + '</pre><button class="btn sm copybtn" data-copy="prev">Copy</button></div></div>';
         }
 
-        out += '<div class="note warn"><b>What this dataset is and is not</b><p>These are NHAI plaza ' +
-          "locations and operator details from a public snapshot. <b>Rates are 2022-vintage and will be " +
-          "wrong today.</b> Locations, operators and contacts are stable enough to act on; verify a rate " +
-          "against the plaza before it goes in any document. Crossing records are not in here and cannot be.</p></div>";
+        out += '<p class="small muted">Locations and contacts come from a public NHAI snapshot. ' +
+          "<b>Toll rates are from 2022 and will be wrong today.</b> Vehicle crossings are not in this data.</p>";
 
         $("#toll-out").innerHTML = out;
 

@@ -313,11 +313,6 @@
 
         out += '<div class="card"><h3>All records</h3><div id="cdr-all"></div></div>';
 
-        out += '<div class="note info"><b>Next steps this analysis sets up</b><p>Run the same file through ' +
-          "the Common Contact Finder against your other suspects' CDRs. Push the cell list into the " +
-          "Coordinate Toolkit to map the footprint. Take the brief-use IMEI to the CEIR request builder. " +
-          "And confirm the target number against your requisition, the most frequent A-party is a " +
-          "heuristic, not a guarantee.</p></div>";
 
         $("#cdr-out").innerHTML = out;
 
@@ -508,10 +503,6 @@
             "closely its activity matches the time of the offence.</p><div id=\"cc-tbl\"></div></div>";
         }
 
-        out += '<div class="note info"><b>What to do with a shared number</b><p>Run it through Number ' +
-          "Intelligence, requisition its CAF and its own CDR, and check whether its cell footprint overlaps " +
-          "the offence location. If the same number also appears in the beneficiary account's registered " +
-          "mobile field, you have closed the loop between the phone side and the money side.</p></div>";
 
         $("#cc-out").innerHTML = out;
 
@@ -961,9 +952,8 @@
     render: function (root) {
       var dumps = [];
       root.innerHTML =
-        '<div class="note warn"><b>Use the narrowest window you can justify</b>' +
-        "<p>Every extra minute in the request multiplies the number of uninvolved people whose location " +
-        "data you are collecting. Ask for the offence window, not the day.</p></div>" +
+        '<p class="small muted">Ask for the offence window, not the whole day. Every extra minute ' +
+        "pulls in more uninvolved people.</p>" +
 
         '<div class="card"><div class="drop" id="tw-drop"><div class="big">↓</div>' +
         "<div>Drop two or more tower dumps, one per location, or <b>browse</b></div></div>" +
@@ -1050,10 +1040,6 @@
 
         if (at2.length) out += '<div class="card"><h3>Devices at more than one location</h3><div id="tw-tbl"></div></div>';
 
-        out += '<div class="note info"><b>Before this goes in a report</b><p>For each device in the narrowed ' +
-          "set: requisition its full CDR and CAF, check whether its footprint outside the offence windows is " +
-          "consistent with an innocent explanation, and look for it in the Common Contact Finder against " +
-          "your existing suspects. A single intersection hit is a lead. Corroboration is what makes it evidence.</p></div>";
 
         $("#tw-out").innerHTML = out;
 
