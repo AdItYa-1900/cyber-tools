@@ -550,10 +550,10 @@
      ========================================================== */
   TK.reg({
     id: "verhoeff",
-    name: "Verhoeff Checksum",
+    name: "Aadhaar Number Verifier",
     cluster: "identity",
     tier: 1,
-    desc: "The check-digit algorithm behind Aadhaar numbers. Teaching tool, synthetic numbers only.",
+    desc: "Verify the check digit of an Aadhaar number. It cannot confirm the number was issued.",
     lede: "This demonstrates the Verhoeff algorithm and nothing else. It cannot validate an " +
           "Aadhaar number against UIDAI, and no lawful tool available to an investigator can.",
     badges: ["Verhoeff (1969)", "Synthetic only"],
@@ -594,9 +594,6 @@
       }
 
       root.innerHTML =
-        '<div class="note danger">This page never contacts UIDAI. It only checks the maths, so a number ' +
-        "can pass and still have been issued to nobody. Do not type a real Aadhaar number here.</div>" +
-
         '<div class="card"><h3>Check a synthetic number</h3>' +
           '<div class="field"><label class="lbl">12-digit test number</label>' +
           '<input type="text" id="vh-in" class="mono" maxlength="14" placeholder="e.g. 999912345670" autocomplete="off"></div>' +
@@ -607,16 +604,7 @@
           "will never collide with a real issued number.</p>" +
           '<div class="row"><button class="btn primary" id="vh-gen">Generate 10</button>' +
           '<button class="btn" id="vh-gen-csv">Generate 200 as CSV</button></div>' +
-          '<div id="vh-gen-out" style="margin-top:12px"></div></div>' +
-
-        '<div class="card"><h3>How the algorithm works</h3>' +
-          "<p class=\"small\">Verhoeff is a dihedral-group checksum. Unlike Luhn (used for IMEI and " +
-          "card numbers) it catches all single-digit errors <i>and</i> all adjacent transpositions, " +
-          "which is why it was chosen for a number humans read aloud and type by hand.</p>" +
-          '<p class="small muted">Three tables drive it: a multiplication table <code class="inl">d</code> ' +
-          "over the dihedral group D&#8325;, a permutation table <code class=\"inl\">p</code> applied by " +
-          "position, and an inverse table. The check passes when the accumulated product is the identity " +
-          "element, 0.</p></div>";
+          '<div id="vh-gen-out" style="margin-top:12px"></div></div>';
 
       function render() {
         var v = $("#vh-in").value.replace(/[^\d]/g, "");
@@ -636,7 +624,8 @@
         var ok = verhoeffCheck(v);
         var expected = verhoeffDigit(v.slice(0, 11));
         el.innerHTML = '<div class="note ' + (ok ? "ok" : "danger") + '"><b>' +
-          (ok ? "Checksum valid" : "Checksum FAILS") + "</b>" +
+          (ok ? "Check digit valid, which does not mean the number was issued"
+              : "Check digit FAILS, this number is mistyped or invented") + "</b>" +
           "<p>Payload <span class='mono'>" + v.slice(0, 11) + "</span>, check digit <span class='mono'>" +
           v[11] + "</span>" + (ok ? "" : ", expected <span class='mono'>" + expected + "</span>") + ".</p>" +
           "<p class='xs muted'>Structurally well-formed only. This is not a statement that the number exists.</p></div>";

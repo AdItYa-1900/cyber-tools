@@ -930,11 +930,8 @@
     TK.clusters.forEach(function (raw) {
       var cl = TK.cluster(raw.id);
       if (homeFilter && cl.id !== homeFilter) return;
-      var ids = TK.order.filter(function (id) {
-        var t = TK.tool(id);
-        if (t.cluster !== cl.id) return false;
-        return !q || (t.name + " " + t.desc + " " + t.what).toLowerCase().indexOf(q) !== -1;
-      });
+      var inCluster = TK.order.filter(function (id) { return TK.tool(id).cluster === cl.id; });
+      var ids = TK.searchTools(q, inCluster);
       if (!ids.length) return;
       hits += ids.length;
       out += '<section class="cluster"><div class="cluster-head">' +
@@ -1022,6 +1019,60 @@
     }
   }
 
+
+  /* ------------------------------------------------- tool search
+     One matcher behind both the home field and the palette, so the same
+     query cannot give two different answers.
+
+     Every token must match somewhere (AND, not OR), which is what makes
+     a second word narrow the list instead of widening it. Word order is
+     irrelevant. Scoring puts a hit in the name above a hit in the body,
+     so typing "imei" leads with the IMEI tool rather than with whatever
+     merely mentions it. */
+  function searchable(id) {
+    var t = TK.tool(id), cl = TK.cluster(t.cluster);
+    return {
+      t: t,
+      name: (t.name || "").toLowerCase(),
+      desc: (t.desc || "").toLowerCase(),
+      body: ((t.what || "") + " " + (t.need || []).join(" ") + " " +
+             (t.steps || []).join(" ")).toLowerCase(),
+      cluster: ((cl.name || "") + " " + (cl.q || "")).toLowerCase(),
+      id: id.toLowerCase()
+    };
+  }
+
+  TK.searchTools = function (q, ids) {
+    ids = ids || TK.order;
+    q = (q || "").trim().toLowerCase();
+    if (!q) return ids.slice();
+
+    var tokens = q.split(/\s+/).filter(Boolean);
+    var scored = [];
+
+    ids.forEach(function (id) {
+      var f = searchable(id), total = 0;
+      for (var i = 0; i < tokens.length; i++) {
+        var tok = tokens[i], best = 0;
+        if (f.name.indexOf(tok) === 0) best = 100;          // name, at the start
+        else if (f.name.indexOf(tok) !== -1) best = 70;     // name, anywhere
+        else if (f.id.indexOf(tok) !== -1) best = 60;       // the route id
+        else if (f.desc.indexOf(tok) !== -1) best = 40;
+        else if (f.cluster.indexOf(tok) !== -1) best = 25;
+        else if (f.body.indexOf(tok) !== -1) best = 15;
+        if (!best) return;                                   // a token missed: drop it
+        total += best;
+      }
+      scored.push({ id: id, score: total });
+    });
+
+    scored.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return TK.order.indexOf(a.id) - TK.order.indexOf(b.id);  // stable
+    });
+    return scored.map(function (x) { return x.id; });
+  };
+
   /* ---------------------------------------------------- top bar */
 
   /* The tool list that used to live here is gone: the home page groups
@@ -1046,18 +1097,22 @@
     var veil = document.createElement("div");
     veil.className = "cmdk-veil";
     veil.innerHTML =
-      '<div class="cmdk" role="dialog" aria-modal="true" aria-label="Search tools">' +
+      '<div class="cmdk" role="dialog" aria-modal="true" aria-label="' +
+        esc(TK.t("searchAll")) + '">' +
         '<div class="cmdk-input">' +
           '<span class="spinner" style="border:0;background:var(--fg-3);width:14px;height:14px;' +
             'border-radius:0;animation:none;-webkit-mask:no-repeat center/contain url(&quot;data:image/svg+xml,' +
             "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' " +
             "stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E" +
             '%3Cpath d=\'M20 20l-3.6-3.6\'/%3E%3C/svg%3E&quot;)"></span>' +
-          '<input type="text" placeholder="Search tools…" autocomplete="off" spellcheck="false">' +
+          '<input type="text" placeholder="' + esc(TK.t("search")) +
+            '" autocomplete="off" spellcheck="false">' +
         "</div>" +
         '<div class="cmdk-list"></div>' +
-        '<div class="cmdk-foot"><span><b class="kbd">↑↓</b> navigate</span>' +
-        '<span><b class="kbd">↵</b> open</span><span><b class="kbd">esc</b> close</span></div>' +
+        '<div class="cmdk-foot"><span><b class="kbd">↑↓</b> ' +
+          (TK.lang === "hi" ? "चुनें" : "navigate") + "</span>" +
+        '<span><b class="kbd">↵</b> ' + esc(TK.t("openTool")) + "</span>" +
+        '<span><b class="kbd">esc</b> ' + (TK.lang === "hi" ? "बंद" : "close") + "</span></div>" +
       "</div>";
     document.body.appendChild(veil);
     palette = veil;
@@ -1066,27 +1121,41 @@
     var items = [], sel = 0;
 
     function render(q) {
-      q = q.trim().toLowerCase();
       items = [];
       var html = "";
-      TK.clusters.forEach(function (cl) {
-        var ids = TK.order.filter(function (id) {
-          var t = TK.tools[id];
-          if (t.cluster !== cl.id) return false;
-          return !q || (t.name + " " + t.desc).toLowerCase().indexOf(q) !== -1;
+      var ranked = TK.searchTools(q);
+
+      if (q.trim()) {
+        /* With a query, ranking is the point: grouping by cluster would
+           scatter the best matches down the list. Show the order the
+           matcher produced, with the cluster named on each row. */
+        ranked.forEach(function (id) {
+          var t = TK.tool(id), cl = TK.cluster(t.cluster);
+          html += row(id, t, cl.name);
         });
-        if (!ids.length) return;
-        html += '<div class="cmdk-group">' + esc(cl.name) + "</div>";
-        ids.forEach(function (id) {
-          var t = TK.tools[id];
-          html += '<div class="cmdk-item" role="option" data-id="' + id + '" data-i="' + items.length + '">' +
-            '<span class="pip t' + t.tier + '">T' + t.tier + "</span>" +
-            '<span class="nm">' + esc(t.name) + "</span>" +
-            '<span class="ds">' + esc(t.desc.slice(0, 52)) + "…</span></div>";
-          items.push(id);
+      } else {
+        TK.clusters.forEach(function (raw) {
+          var cl = TK.cluster(raw.id);
+          var ids = ranked.filter(function (id) { return TK.tool(id).cluster === cl.id; });
+          if (!ids.length) return;
+          html += '<div class="cmdk-group">' + esc(cl.name) + "</div>";
+          ids.forEach(function (id) { html += row(id, TK.tool(id), ""); });
         });
-      });
-      list.innerHTML = html || '<div class="cmdk-empty">No tool matches that.</div>';
+      }
+
+      function row(id, t, clName) {
+        var d = t.desc || "";
+        var short = d.length > 58 ? d.slice(0, 57).replace(/[\s,;:]+$/, "") + "…" : d;
+        var out = '<div class="cmdk-item" role="option" data-id="' + id + '" data-i="' + items.length + '">' +
+          '<span class="pip t' + t.tier + '">T' + t.tier + "</span>" +
+          '<span class="nm">' + esc(t.name) + "</span>" +
+          '<span class="ds">' + esc(clName ? clName + " · " + short : short) + "</span></div>";
+        items.push(id);
+        return out;
+      }
+
+      list.innerHTML = html ||
+        '<div class="cmdk-empty">' + esc(TK.t("noResults")) + "</div>";
       sel = 0; mark();
     }
 
