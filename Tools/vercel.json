@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/t/new", "destination": "/api/new" },
+    { "source": "/t/c/:token", "destination": "/api/c?token=:token" },
+    { "source": "/t/log/:token", "destination": "/api/log?token=:token" },
+    { "source": "/t/hits/:token", "destination": "/api/hits?token=:token" },
+    { "source": "/", "destination": "/index.html" }
+  ]
+}

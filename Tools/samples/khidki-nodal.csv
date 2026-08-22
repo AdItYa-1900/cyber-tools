@@ -1,0 +1,12 @@
+NODAL OFFICER DIRECTORY (SYNTHETIC TRAINING SAMPLE - NOT REAL CONTACTS)
+Source,Replace this file with the current list from cybercrime.gov.in
+
+Entity,Category,Officer Name,Designation,Email,Phone,Address,Updated
+Example Bank Ltd,Bank,[withheld],Nodal Officer (LEA),lea.nodal@example-bank.test,022-00000001,"Mumbai 400001",2026-01-15
+Sample Payments Bank,Bank,[withheld],Vice President - Compliance,nodal@sample-pay.test,022-00000002,"Noida 201301",2026-01-15
+Demo Telecom (Karnataka),TSP,[withheld],Nodal Officer,nodal.ka@demo-telecom.test,080-00000003,"Bengaluru 560001",2026-02-01
+Demo Telecom (Maharashtra),TSP,[withheld],Nodal Officer,nodal.mh@demo-telecom.test,022-00000004,"Mumbai 400051",2026-02-01
+Test Wallet Pvt Ltd,PPI,[withheld],Grievance Officer,grievance@test-wallet.test,0124-0000005,"Gurugram 122002",2026-01-20
+Placeholder Social Ltd,Intermediary,[withheld],Nodal Contact - India,lea-india@placeholder-social.test,,"Delhi 110001",2026-02-10
+Placeholder Messaging,Intermediary,[withheld],Grievance Officer,grievance@placeholder-msg.test,,"Delhi 110001",2026-02-10
+Mock ISP Networks,ISP,[withheld],Nodal Officer,nodal@mock-isp.test,044-0000006,"Chennai 600002",2026-01-05

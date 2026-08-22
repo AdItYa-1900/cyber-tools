@@ -1,0 +1,157 @@
+CELL SITE MASTER DATA - CONFIDENTIAL
+Licensee,Airtel / Jio / Vi / BSNL (consolidated extract)
+LSA,Karnataka
+Requisition Ref,NODAL/LEA/2026/04412 dated 21-03-2026
+Generated On,02-04-2026
+
+CGI,MCC,MNC,LAC,CI,Operator,Technology,Site Type,Azimuth,Latitude,Longitude,Site Name,Address,City,Circle
+404-45-1100-10,404,45,1100,10,Airtel,4G,Micro,0,12.939867,77.617232,BLR_Koramangala_S1,"8th Block, Koramangala",Bengaluru,Karnataka
+404-45-1100-11,404,45,1100,11,Airtel,4G,Micro,120,12.939867,77.617232,BLR_Koramangala_S2,"8th Block, Koramangala",Bengaluru,Karnataka
+404-45-1100-12,404,45,1100,12,Airtel,4G,Micro,240,12.939867,77.617232,BLR_Koramangala_S3,"8th Block, Koramangala",Bengaluru,Karnataka
+405-857-1101-17,405,857,1101,17,Jio,4G,Micro,0,12.936782,77.617096,BLR_Koramangala_S1,"8th Block, Koramangala",Bengaluru,Karnataka
+405-857-1101-18,405,857,1101,18,Jio,4G,Micro,120,12.936782,77.617096,BLR_Koramangala_S2,"8th Block, Koramangala",Bengaluru,Karnataka
+405-857-1101-19,405,857,1101,19,Jio,4G,Micro,240,12.936782,77.617096,BLR_Koramangala_S3,"8th Block, Koramangala",Bengaluru,Karnataka
+404-86-1102-24,404,86,1102,24,Vi,5G,Macro,0,12.942291,77.623766,BLR_Koramangala_S1,"8th Block, Koramangala",Bengaluru,Karnataka
+404-86-1102-25,404,86,1102,25,Vi,5G,Macro,120,12.942291,77.623766,BLR_Koramangala_S2,"8th Block, Koramangala",Bengaluru,Karnataka
+404-86-1102-26,404,86,1102,26,Vi,5G,Macro,240,12.942291,77.623766,BLR_Koramangala_S3,"8th Block, Koramangala",Bengaluru,Karnataka
+404-64-1103-31,404,64,1103,31,BSNL,4G,Macro,0,12.926830,77.634127,BLR_Koramangala_S1,"8th Block, Koramangala",Bengaluru,Karnataka
+404-64-1103-32,404,64,1103,32,BSNL,4G,Macro,120,12.926830,77.634127,BLR_Koramangala_S2,"8th Block, Koramangala",Bengaluru,Karnataka
+404-64-1103-33,404,64,1103,33,BSNL,4G,Macro,240,12.926830,77.634127,BLR_Koramangala_S3,"8th Block, Koramangala",Bengaluru,Karnataka
+404-45-1107-40,404,45,1107,40,Airtel,4G,Macro,0,12.969705,77.650951,BLR_Indiranagar_S1,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-45-1107-41,404,45,1107,41,Airtel,4G,Macro,120,12.969705,77.650951,BLR_Indiranagar_S2,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-45-1107-42,404,45,1107,42,Airtel,4G,Macro,240,12.969705,77.650951,BLR_Indiranagar_S3,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+405-857-1108-47,405,857,1108,47,Jio,4G,Micro,0,12.975707,77.632135,BLR_Indiranagar_S1,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+405-857-1108-48,405,857,1108,48,Jio,4G,Micro,120,12.975707,77.632135,BLR_Indiranagar_S2,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+405-857-1108-49,405,857,1108,49,Jio,4G,Micro,240,12.975707,77.632135,BLR_Indiranagar_S3,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-86-1109-54,404,86,1109,54,Vi,4G,Macro,0,12.976574,77.648292,BLR_Indiranagar_S1,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-86-1109-55,404,86,1109,55,Vi,4G,Macro,120,12.976574,77.648292,BLR_Indiranagar_S2,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-86-1109-56,404,86,1109,56,Vi,4G,Macro,240,12.976574,77.648292,BLR_Indiranagar_S3,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-64-1110-61,404,64,1110,61,BSNL,4G,Micro,0,12.972772,77.641992,BLR_Indiranagar_S1,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-64-1110-62,404,64,1110,62,BSNL,4G,Micro,120,12.972772,77.641992,BLR_Indiranagar_S2,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-64-1110-63,404,64,1110,63,BSNL,4G,Micro,240,12.972772,77.641992,BLR_Indiranagar_S3,"100 Feet Road, Indiranagar",Bengaluru,Karnataka
+404-45-1114-70,404,45,1114,70,Airtel,4G,IBS,0,12.964651,77.752562,BLR_Whitefield_S1,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-45-1114-71,404,45,1114,71,Airtel,4G,IBS,120,12.964651,77.752562,BLR_Whitefield_S2,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-45-1114-72,404,45,1114,72,Airtel,4G,IBS,240,12.964651,77.752562,BLR_Whitefield_S3,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+405-857-1115-77,405,857,1115,77,Jio,4G,Macro,0,12.977394,77.741893,BLR_Whitefield_S1,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+405-857-1115-78,405,857,1115,78,Jio,4G,Macro,120,12.977394,77.741893,BLR_Whitefield_S2,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+405-857-1115-79,405,857,1115,79,Jio,4G,Macro,240,12.977394,77.741893,BLR_Whitefield_S3,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-86-1116-84,404,86,1116,84,Vi,5G,Macro,0,12.961290,77.744986,BLR_Whitefield_S1,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-86-1116-85,404,86,1116,85,Vi,5G,Macro,120,12.961290,77.744986,BLR_Whitefield_S2,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-86-1116-86,404,86,1116,86,Vi,5G,Macro,240,12.961290,77.744986,BLR_Whitefield_S3,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-64-1117-91,404,64,1117,91,BSNL,4G,IBS,0,12.964431,77.744792,BLR_Whitefield_S1,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-64-1117-92,404,64,1117,92,BSNL,4G,IBS,120,12.964431,77.744792,BLR_Whitefield_S2,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-64-1117-93,404,64,1117,93,BSNL,4G,IBS,240,12.964431,77.744792,BLR_Whitefield_S3,"ITPL Main Road, Whitefield",Bengaluru,Karnataka
+404-45-1121-100,404,45,1121,100,Airtel,4G,Micro,0,12.972068,77.562435,BLR_Majestic_S1,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-45-1121-101,404,45,1121,101,Airtel,4G,Micro,120,12.972068,77.562435,BLR_Majestic_S2,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-45-1121-102,404,45,1121,102,Airtel,4G,Micro,240,12.972068,77.562435,BLR_Majestic_S3,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+405-857-1122-107,405,857,1122,107,Jio,4G,Macro,0,12.967103,77.564055,BLR_Majestic_S1,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+405-857-1122-108,405,857,1122,108,Jio,4G,Macro,120,12.967103,77.564055,BLR_Majestic_S2,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+405-857-1122-109,405,857,1122,109,Jio,4G,Macro,240,12.967103,77.564055,BLR_Majestic_S3,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-86-1123-114,404,86,1123,114,Vi,4G,Macro,0,12.968831,77.574274,BLR_Majestic_S1,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-86-1123-115,404,86,1123,115,Vi,4G,Macro,120,12.968831,77.574274,BLR_Majestic_S2,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-86-1123-116,404,86,1123,116,Vi,4G,Macro,240,12.968831,77.574274,BLR_Majestic_S3,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-64-1124-121,404,64,1124,121,BSNL,5G,Macro,0,12.984854,77.580330,BLR_Majestic_S1,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-64-1124-122,404,64,1124,122,BSNL,5G,Macro,120,12.984854,77.580330,BLR_Majestic_S2,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-64-1124-123,404,64,1124,123,BSNL,5G,Macro,240,12.984854,77.580330,BLR_Majestic_S3,"Gubbi Thotadappa Road, Majestic",Bengaluru,Karnataka
+404-45-1128-130,404,45,1128,130,Airtel,4G,Macro,0,12.849578,77.652022,BLR_ElectronicCity_S1,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-45-1128-131,404,45,1128,131,Airtel,4G,Macro,120,12.849578,77.652022,BLR_ElectronicCity_S2,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-45-1128-132,404,45,1128,132,Airtel,4G,Macro,240,12.849578,77.652022,BLR_ElectronicCity_S3,"Phase 1, Electronic City",Bengaluru,Karnataka
+405-857-1129-137,405,857,1129,137,Jio,4G,Macro,0,12.840499,77.651445,BLR_ElectronicCity_S1,"Phase 1, Electronic City",Bengaluru,Karnataka
+405-857-1129-138,405,857,1129,138,Jio,4G,Macro,120,12.840499,77.651445,BLR_ElectronicCity_S2,"Phase 1, Electronic City",Bengaluru,Karnataka
+405-857-1129-139,405,857,1129,139,Jio,4G,Macro,240,12.840499,77.651445,BLR_ElectronicCity_S3,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-86-1130-144,404,86,1130,144,Vi,5G,Macro,0,12.837048,77.651894,BLR_ElectronicCity_S1,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-86-1130-145,404,86,1130,145,Vi,5G,Macro,120,12.837048,77.651894,BLR_ElectronicCity_S2,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-86-1130-146,404,86,1130,146,Vi,5G,Macro,240,12.837048,77.651894,BLR_ElectronicCity_S3,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-64-1131-151,404,64,1131,151,BSNL,4G,Macro,0,12.844612,77.659439,BLR_ElectronicCity_S1,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-64-1131-152,404,64,1131,152,BSNL,4G,Macro,120,12.844612,77.659439,BLR_ElectronicCity_S2,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-64-1131-153,404,64,1131,153,BSNL,4G,Macro,240,12.844612,77.659439,BLR_ElectronicCity_S3,"Phase 1, Electronic City",Bengaluru,Karnataka
+404-45-1135-160,404,45,1135,160,Airtel,4G,Macro,0,12.915684,77.594754,BLR_Jayanagar_S1,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-45-1135-161,404,45,1135,161,Airtel,4G,Macro,120,12.915684,77.594754,BLR_Jayanagar_S2,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-45-1135-162,404,45,1135,162,Airtel,4G,Macro,240,12.915684,77.594754,BLR_Jayanagar_S3,"4th Block, Jayanagar",Bengaluru,Karnataka
+405-857-1136-167,405,857,1136,167,Jio,4G,Macro,0,12.915631,77.598864,BLR_Jayanagar_S1,"4th Block, Jayanagar",Bengaluru,Karnataka
+405-857-1136-168,405,857,1136,168,Jio,4G,Macro,120,12.915631,77.598864,BLR_Jayanagar_S2,"4th Block, Jayanagar",Bengaluru,Karnataka
+405-857-1136-169,405,857,1136,169,Jio,4G,Macro,240,12.915631,77.598864,BLR_Jayanagar_S3,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-86-1137-174,404,86,1137,174,Vi,2G,IBS,0,12.917742,77.584712,BLR_Jayanagar_S1,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-86-1137-175,404,86,1137,175,Vi,2G,IBS,120,12.917742,77.584712,BLR_Jayanagar_S2,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-86-1137-176,404,86,1137,176,Vi,2G,IBS,240,12.917742,77.584712,BLR_Jayanagar_S3,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-64-1138-181,404,64,1138,181,BSNL,4G,Macro,0,12.922277,77.589749,BLR_Jayanagar_S1,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-64-1138-182,404,64,1138,182,BSNL,4G,Macro,120,12.922277,77.589749,BLR_Jayanagar_S2,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-64-1138-183,404,64,1138,183,BSNL,4G,Macro,240,12.922277,77.589749,BLR_Jayanagar_S3,"4th Block, Jayanagar",Bengaluru,Karnataka
+404-45-1142-190,404,45,1142,190,Airtel,4G,Micro,0,12.909126,77.647453,BLR_HSRLayout_S1,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-45-1142-191,404,45,1142,191,Airtel,4G,Micro,120,12.909126,77.647453,BLR_HSRLayout_S2,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-45-1142-192,404,45,1142,192,Airtel,4G,Micro,240,12.909126,77.647453,BLR_HSRLayout_S3,"27th Main, HSR Layout",Bengaluru,Karnataka
+405-857-1143-197,405,857,1143,197,Jio,4G,Macro,0,12.909308,77.643913,BLR_HSRLayout_S1,"27th Main, HSR Layout",Bengaluru,Karnataka
+405-857-1143-198,405,857,1143,198,Jio,4G,Macro,120,12.909308,77.643913,BLR_HSRLayout_S2,"27th Main, HSR Layout",Bengaluru,Karnataka
+405-857-1143-199,405,857,1143,199,Jio,4G,Macro,240,12.909308,77.643913,BLR_HSRLayout_S3,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-86-1144-204,404,86,1144,204,Vi,5G,Macro,0,12.904450,77.650216,BLR_HSRLayout_S1,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-86-1144-205,404,86,1144,205,Vi,5G,Macro,120,12.904450,77.650216,BLR_HSRLayout_S2,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-86-1144-206,404,86,1144,206,Vi,5G,Macro,240,12.904450,77.650216,BLR_HSRLayout_S3,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-64-1145-211,404,64,1145,211,BSNL,4G,Micro,0,12.911482,77.647223,BLR_HSRLayout_S1,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-64-1145-212,404,64,1145,212,BSNL,4G,Micro,120,12.911482,77.647223,BLR_HSRLayout_S2,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-64-1145-213,404,64,1145,213,BSNL,4G,Micro,240,12.911482,77.647223,BLR_HSRLayout_S3,"27th Main, HSR Layout",Bengaluru,Karnataka
+404-45-1149-220,404,45,1149,220,Airtel,4G,IBS,0,12.962203,77.692496,BLR_Marathahalli_S1,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-45-1149-221,404,45,1149,221,Airtel,4G,IBS,120,12.962203,77.692496,BLR_Marathahalli_S2,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-45-1149-222,404,45,1149,222,Airtel,4G,IBS,240,12.962203,77.692496,BLR_Marathahalli_S3,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+405-857-1150-227,405,857,1150,227,Jio,4G,Micro,0,12.966672,77.691742,BLR_Marathahalli_S1,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+405-857-1150-228,405,857,1150,228,Jio,4G,Micro,120,12.966672,77.691742,BLR_Marathahalli_S2,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+405-857-1150-229,405,857,1150,229,Jio,4G,Micro,240,12.966672,77.691742,BLR_Marathahalli_S3,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-86-1151-234,404,86,1151,234,Vi,4G,Macro,0,12.955626,77.691819,BLR_Marathahalli_S1,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-86-1151-235,404,86,1151,235,Vi,4G,Macro,120,12.955626,77.691819,BLR_Marathahalli_S2,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-86-1151-236,404,86,1151,236,Vi,4G,Macro,240,12.955626,77.691819,BLR_Marathahalli_S3,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-64-1152-241,404,64,1152,241,BSNL,5G,Macro,0,12.962350,77.688770,BLR_Marathahalli_S1,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-64-1152-242,404,64,1152,242,BSNL,5G,Macro,120,12.962350,77.688770,BLR_Marathahalli_S2,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-64-1152-243,404,64,1152,243,BSNL,5G,Macro,240,12.962350,77.688770,BLR_Marathahalli_S3,"Outer Ring Road, Marathahalli",Bengaluru,Karnataka
+404-45-1156-250,404,45,1156,250,Airtel,2G,Macro,0,13.045793,77.598197,BLR_Hebbal_S1,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-45-1156-251,404,45,1156,251,Airtel,2G,Macro,120,13.045793,77.598197,BLR_Hebbal_S2,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-45-1156-252,404,45,1156,252,Airtel,2G,Macro,240,13.045793,77.598197,BLR_Hebbal_S3,"Bellary Road, Hebbal",Bengaluru,Karnataka
+405-857-1157-257,405,857,1157,257,Jio,4G,Macro,0,13.045577,77.596786,BLR_Hebbal_S1,"Bellary Road, Hebbal",Bengaluru,Karnataka
+405-857-1157-258,405,857,1157,258,Jio,4G,Macro,120,13.045577,77.596786,BLR_Hebbal_S2,"Bellary Road, Hebbal",Bengaluru,Karnataka
+405-857-1157-259,405,857,1157,259,Jio,4G,Macro,240,13.045577,77.596786,BLR_Hebbal_S3,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-86-1158-264,404,86,1158,264,Vi,4G,Micro,0,13.039083,77.601417,BLR_Hebbal_S1,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-86-1158-265,404,86,1158,265,Vi,4G,Micro,120,13.039083,77.601417,BLR_Hebbal_S2,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-86-1158-266,404,86,1158,266,Vi,4G,Micro,240,13.039083,77.601417,BLR_Hebbal_S3,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-64-1159-271,404,64,1159,271,BSNL,4G,IBS,0,13.040515,77.598274,BLR_Hebbal_S1,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-64-1159-272,404,64,1159,272,BSNL,4G,IBS,120,13.040515,77.598274,BLR_Hebbal_S2,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-64-1159-273,404,64,1159,273,BSNL,4G,IBS,240,13.040515,77.598274,BLR_Hebbal_S3,"Bellary Road, Hebbal",Bengaluru,Karnataka
+404-45-1163-280,404,45,1163,280,Airtel,5G,Macro,0,13.105101,77.594442,BLR_Yelahanka_S1,"New Town, Yelahanka",Bengaluru,Karnataka
+404-45-1163-281,404,45,1163,281,Airtel,5G,Macro,120,13.105101,77.594442,BLR_Yelahanka_S2,"New Town, Yelahanka",Bengaluru,Karnataka
+404-45-1163-282,404,45,1163,282,Airtel,5G,Macro,240,13.105101,77.594442,BLR_Yelahanka_S3,"New Town, Yelahanka",Bengaluru,Karnataka
+405-857-1164-287,405,857,1164,287,Jio,5G,Macro,0,13.108492,77.603574,BLR_Yelahanka_S1,"New Town, Yelahanka",Bengaluru,Karnataka
+405-857-1164-288,405,857,1164,288,Jio,5G,Macro,120,13.108492,77.603574,BLR_Yelahanka_S2,"New Town, Yelahanka",Bengaluru,Karnataka
+405-857-1164-289,405,857,1164,289,Jio,5G,Macro,240,13.108492,77.603574,BLR_Yelahanka_S3,"New Town, Yelahanka",Bengaluru,Karnataka
+404-86-1165-294,404,86,1165,294,Vi,5G,Macro,0,13.101661,77.602621,BLR_Yelahanka_S1,"New Town, Yelahanka",Bengaluru,Karnataka
+404-86-1165-295,404,86,1165,295,Vi,5G,Macro,120,13.101661,77.602621,BLR_Yelahanka_S2,"New Town, Yelahanka",Bengaluru,Karnataka
+404-86-1165-296,404,86,1165,296,Vi,5G,Macro,240,13.101661,77.602621,BLR_Yelahanka_S3,"New Town, Yelahanka",Bengaluru,Karnataka
+404-64-1166-301,404,64,1166,301,BSNL,4G,Macro,0,13.101446,77.600912,BLR_Yelahanka_S1,"New Town, Yelahanka",Bengaluru,Karnataka
+404-64-1166-302,404,64,1166,302,BSNL,4G,Macro,120,13.101446,77.600912,BLR_Yelahanka_S2,"New Town, Yelahanka",Bengaluru,Karnataka
+404-64-1166-303,404,64,1166,303,BSNL,4G,Macro,240,13.101446,77.600912,BLR_Yelahanka_S3,"New Town, Yelahanka",Bengaluru,Karnataka
+404-45-1170-310,404,45,1170,310,Airtel,4G,Macro,0,12.924545,77.548891,BLR_Banashankari_S1,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-45-1170-311,404,45,1170,311,Airtel,4G,Macro,120,12.924545,77.548891,BLR_Banashankari_S2,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-45-1170-312,404,45,1170,312,Airtel,4G,Macro,240,12.924545,77.548891,BLR_Banashankari_S3,"2nd Stage, Banashankari",Bengaluru,Karnataka
+405-857-1171-317,405,857,1171,317,Jio,5G,IBS,0,12.934260,77.547691,BLR_Banashankari_S1,"2nd Stage, Banashankari",Bengaluru,Karnataka
+405-857-1171-318,405,857,1171,318,Jio,5G,IBS,120,12.934260,77.547691,BLR_Banashankari_S2,"2nd Stage, Banashankari",Bengaluru,Karnataka
+405-857-1171-319,405,857,1171,319,Jio,5G,IBS,240,12.934260,77.547691,BLR_Banashankari_S3,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-86-1172-324,404,86,1172,324,Vi,4G,IBS,0,12.917825,77.547887,BLR_Banashankari_S1,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-86-1172-325,404,86,1172,325,Vi,4G,IBS,120,12.917825,77.547887,BLR_Banashankari_S2,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-86-1172-326,404,86,1172,326,Vi,4G,IBS,240,12.917825,77.547887,BLR_Banashankari_S3,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-64-1173-331,404,64,1173,331,BSNL,4G,Macro,0,12.930970,77.539655,BLR_Banashankari_S1,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-64-1173-332,404,64,1173,332,BSNL,4G,Macro,120,12.930970,77.539655,BLR_Banashankari_S2,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-64-1173-333,404,64,1173,333,BSNL,4G,Macro,240,12.930970,77.539655,BLR_Banashankari_S3,"2nd Stage, Banashankari",Bengaluru,Karnataka
+404-45-1177-340,404,45,1177,340,Airtel,5G,Macro,0,12.991698,77.558027,BLR_Rajajinagar_S1,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-45-1177-341,404,45,1177,341,Airtel,5G,Macro,120,12.991698,77.558027,BLR_Rajajinagar_S2,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-45-1177-342,404,45,1177,342,Airtel,5G,Macro,240,12.991698,77.558027,BLR_Rajajinagar_S3,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+405-857-1178-347,405,857,1178,347,Jio,4G,IBS,0,12.994463,77.564661,BLR_Rajajinagar_S1,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+405-857-1178-348,405,857,1178,348,Jio,4G,IBS,120,12.994463,77.564661,BLR_Rajajinagar_S2,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+405-857-1178-349,405,857,1178,349,Jio,4G,IBS,240,12.994463,77.564661,BLR_Rajajinagar_S3,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-86-1179-354,404,86,1179,354,Vi,4G,Macro,0,12.994190,77.548138,BLR_Rajajinagar_S1,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-86-1179-355,404,86,1179,355,Vi,4G,Macro,120,12.994190,77.548138,BLR_Rajajinagar_S2,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-86-1179-356,404,86,1179,356,Vi,4G,Macro,240,12.994190,77.548138,BLR_Rajajinagar_S3,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-64-1180-361,404,64,1180,361,BSNL,4G,IBS,0,12.999399,77.549782,BLR_Rajajinagar_S1,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-64-1180-362,404,64,1180,362,BSNL,4G,IBS,120,12.999399,77.549782,BLR_Rajajinagar_S2,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-64-1180-363,404,64,1180,363,BSNL,4G,IBS,240,12.999399,77.549782,BLR_Rajajinagar_S3,"Dr Rajkumar Road, Rajajinagar",Bengaluru,Karnataka
+404-45-1149-21,404,45,1149,21,Airtel,4G,Macro,0,12.935200,77.624500,BLR_Koramangala_S1,Site address on record with the licensee,Bengaluru,Karnataka
+404-45-1149-22,404,45,1149,22,Airtel,4G,Macro,0,12.935200,77.624500,BLR_Koramangala_S2,Site address on record with the licensee,Bengaluru,Karnataka
+404-45-2201-11,404,45,2201,11,Airtel,4G,Macro,0,12.971600,77.641200,BLR_Indiranagar_S1,Site address on record with the licensee,Bengaluru,Karnataka
+404-45-3310-31,404,45,3310,31,Airtel,4G,Macro,0,12.969800,77.750000,BLR_Whitefield_S3,Site address on record with the licensee,Bengaluru,Karnataka
+404-45-4402-12,404,45,4402,12,Airtel,4G,Macro,120,12.976700,77.571300,BLR_Majestic_S1,Site address on record with the licensee,Bengaluru,Karnataka
+404-45-5518-11,404,45,5518,11,Airtel,4G,Macro,120,12.845200,77.660200,BLR_Electronic_City,Site address on record with the licensee,Bengaluru,Karnataka
