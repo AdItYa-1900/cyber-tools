@@ -1061,6 +1061,21 @@ code.inl {
   .main .wrap { padding-bottom: calc(var(--s8) + 24px); }
 }
 
+/* ------------------------------------------------- tracer status
+   A plain-language line telling the officer whether the capture server
+   is up, with a coloured dot they read before the words. */
+.cn-status {
+  display: flex; align-items: center; gap: 9px;
+  padding: 11px 14px; border-radius: var(--r3);
+  background: var(--bg-2); border: 1px solid var(--line);
+  font-size: var(--t-sm); color: var(--fg-1); line-height: 1.5;
+}
+.cn-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--fg-3); }
+.cn-dot.ok   { background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 22%, transparent); }
+.cn-dot.off  { background: var(--danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 22%, transparent); }
+.cn-dot.wait { background: var(--warn); animation: cn-pulse 1s ease-in-out infinite; }
+@keyframes cn-pulse { 50% { opacity: .35; } }
+
 /* ============================================================ palette */
 
 .cmdk-veil {

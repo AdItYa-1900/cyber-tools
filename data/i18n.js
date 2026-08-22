@@ -738,6 +738,65 @@ window.I18N = {
                 "Actually is और Named as की पंक्तियाँ मिलाकर देखें",
                 "यदि चेतावनी मिले कि फ़ाइल एक प्रोग्राम है तो उसे न खोलें, फ़ॉरेंसिक इकाई को भेजें",
                 "यह निष्कर्ष दर्ज करें, छिपाई गई फ़ाइल स्वयं मंशा का प्रमाण है"] }
+    },
+
+    linkfinder: {
+      en: { name: "Entity Link Finder",
+        desc: "Load every file in a case and find the identifiers that appear in more than one.",
+        what: "The slowest part of a case is not reading any single file. It is noticing that the mobile number on a bank KYC is the same number in the suspect's call records. This tool reads every file supplied, extracts each identifier it recognises, and reports those present in more than one source, ranked by the number of sources. A value appearing in two files is a lead and not proof, and each one must be explained before it enters a report.",
+        need: ["Two or more files from the same case, as CSV or text"],
+        steps: ["Drop all the case files together",
+                "Read the rows where the source count equals the number of files first",
+                "Establish what each shared value is before treating it as a connection",
+                "Download the table for the case record"] },
+      hi: { name: "पहचान संबंध खोजक",
+        desc: "प्रकरण की सभी फ़ाइलें लोड कर वे पहचान ज्ञात करें जो एक से अधिक में मिलती हैं।",
+        what: "प्रकरण में सर्वाधिक समय किसी एक फ़ाइल को पढ़ने में नहीं लगता। समय इस बात को पकड़ने में लगता है कि बैंक केवाईसी पर दर्ज मोबाइल नंबर वही है जो संदिग्ध के कॉल रिकॉर्ड में है। यह टूल दी गई प्रत्येक फ़ाइल पढ़ता है, पहचानी जाने वाली प्रत्येक पहचान निकालता है, और वे प्रस्तुत करता है जो एक से अधिक स्रोत में उपस्थित हैं, स्रोतों की संख्या के क्रम में। दो फ़ाइलों में मिलने वाला मान संकेत है, प्रमाण नहीं, तथा रिपोर्ट में जाने से पूर्व प्रत्येक की व्याख्या आवश्यक है।",
+        need: ["एक ही प्रकरण की दो या अधिक फ़ाइलें, सीएसवी अथवा पाठ रूप में"],
+        steps: ["प्रकरण की सभी फ़ाइलें एक साथ छोड़ें",
+                "पहले वे पंक्तियाँ पढ़ें जिनमें स्रोत संख्या कुल फ़ाइलों के बराबर है",
+                "किसी साझा मान को संबंध मानने से पूर्व यह स्थापित करें कि वह मान है क्या",
+                "प्रकरण अभिलेख हेतु तालिका डाउनलोड करें"] }
+    },
+
+    chat: {
+      en: { name: "Chat Export Analyser",
+        desc: "Read an exported chat into a record of who spoke, when, and what the export left out.",
+        what: "An exported conversation is now the commonest single exhibit in a cyber case, and it arrives as thousands of lines that somebody has to read by eye. This tool reduces it to a record: the participants, the message counts, the period covered, the links and identifiers mentioned, and the hours of activity. Two findings concern what is absent. A reference to omitted media establishes that the export was taken without media, so the photographs and voice notes in the conversation are not in the exhibit at all. A deletion notice establishes that a message existed at that time and was withdrawn.",
+        need: ["The .txt file produced by the Export chat function, taken with media"],
+        steps: ["Drop the exported file on the box",
+                "Read the media and deletion warnings before anything else",
+                "Put every link through the Text Decoder before opening any of it",
+                "Take the numbers and UPI addresses found here into the other tools"] },
+      hi: { name: "चैट निर्यात विश्लेषण",
+        desc: "निर्यात की गई चैट को पढ़कर जानें किसने कब क्या कहा, और निर्यात में क्या छूट गया।",
+        what: "निर्यात की गई बातचीत आज साइबर प्रकरणों में सबसे सामान्य प्रदर्श है, और वह हज़ारों पंक्तियों के रूप में आती है जिन्हें कोई न कोई आँखों से पढ़ता है। यह टूल उसे एक अभिलेख में बदल देता है: प्रतिभागी, संदेशों की संख्या, अवधि, उल्लिखित लिंक व पहचान, तथा गतिविधि के घंटे। दो निष्कर्ष अनुपस्थिति से संबंधित हैं। छूटे हुए मीडिया का उल्लेख यह स्थापित करता है कि निर्यात मीडिया के बिना लिया गया था, अतः बातचीत की तस्वीरें और ध्वनि-संदेश प्रदर्श में हैं ही नहीं। विलोपन-सूचना यह स्थापित करती है कि उस समय कोई संदेश था जिसे बाद में हटाया गया।",
+        need: ["Export chat से बनी .txt फ़ाइल, मीडिया सहित"],
+        steps: ["निर्यात फ़ाइल बॉक्स पर छोड़ें",
+                "सबसे पहले मीडिया तथा विलोपन संबंधी चेतावनियाँ पढ़ें",
+                "कोई भी लिंक खोलने से पूर्व उसे Text Decoder में जाँचें",
+                "यहाँ मिले नंबर व यूपीआई पते अन्य टूल में ले जाएँ"] }
+    },
+
+    canary: {
+      en: { name: "Investigative Tracer Link",
+        desc: "Generate a link that records the IP, device and time when a person of interest opens it.",
+        what: "A tracer link records what any web request reveals when it is opened: the public IP address, the device and browser, the exact time, and the language. The IP and the exact time together are what an internet provider needs to identify the subscriber under BNSS s.94. Approximate location is offered through the browser's own permission prompt, which the person sees and must accept. There is no camera capture and no microphone capture: covertly activating either against a link-recipient is not a lawful police power, is inadmissible, and is itself an offence. The full capture log must be disclosed.",
+        need: ["The capture server running on a host the person's device can reach",
+               "Your unit's authority to deploy a tracer against this person"],
+        steps: ["Start the toolkit with the Start Sutra shortcut, which runs the capture server for you",
+                "Generate a link and note its token",
+                "Send the link through your normal channel",
+                "Pull the captured visits and take the IP and time to IP Address Check"] },
+      hi: { name: "अन्वेषण ट्रेसर लिंक",
+        desc: "ऐसा लिंक बनाएँ जो खोले जाने पर आईपी, उपकरण और समय दर्ज कर ले।",
+        what: "ट्रेसर लिंक खोले जाने पर वही जानकारी दर्ज करता है जो कोई भी वेब अनुरोध उजागर करता है: सार्वजनिक आईपी पता, उपकरण व ब्राउज़र, यथार्थ समय, तथा भाषा। आईपी और यथार्थ समय मिलकर वही हैं जो इंटरनेट प्रदाता को बीएनएसएस धारा 94 के अंतर्गत ग्राहक की पहचान हेतु चाहिए। अनुमानित स्थान ब्राउज़र की अपनी अनुमति-सूचना के माध्यम से माँगा जाता है, जिसे व्यक्ति देखता है और स्वीकार करना होता है। इसमें कैमरा नहीं लिया जाता और माइक्रोफ़ोन नहीं लिया जाता: लिंक-प्राप्तकर्ता के विरुद्ध इन्हें गोपनीय रूप से चालू करना पुलिस की वैध शक्ति नहीं है, अस्वीकार्य है, तथा स्वयं में अपराध है। संपूर्ण कैप्चर लॉग प्रकट किया जाना चाहिए।",
+        need: ["कैप्चर सर्वर ऐसे होस्ट पर चलता हुआ जहाँ व्यक्ति का उपकरण पहुँच सके",
+               "इस व्यक्ति के विरुद्ध ट्रेसर लगाने का इकाई का अधिकार"],
+        steps: ["Start Sutra शॉर्टकट से टूलकिट चालू करें, यह कैप्चर सर्वर स्वयं चला देता है",
+                "लिंक बनाएँ और उसका टोकन नोट करें",
+                "लिंक अपने सामान्य माध्यम से भेजें",
+                "कैप्चर की गई विज़िट खींचें और आईपी व समय को IP Address Check में ले जाएँ"] }
     }
   }
 };
