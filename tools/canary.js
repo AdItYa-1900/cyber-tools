@@ -100,17 +100,37 @@
       function checkServer() {
         var el = $("#cn-status");
         el.innerHTML = '<span class="cn-dot wait"></span> checking the capture server…';
-        fetch(base() + "/t/new?ref=probe")
-          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-          .then(function () {
-            el.innerHTML = '<span class="cn-dot ok"></span> ' +
-              "<b>Capture server is running.</b> You can make a link.";
+        /* Probe /t/hits, which touches the store, so this one call tells
+           the three cases apart: no backend (network/404), backend but no
+           store (503 with a message), and fully working (200). */
+        fetch(base() + "/t/hits/probe")
+          .then(function (r) {
+            return r.text().then(function (txt) {
+              var body = {};
+              try { body = JSON.parse(txt); } catch (e) {}
+              return { status: r.status, body: body };
+            });
+          })
+          .then(function (res) {
+            if (res.body && res.body.error === "storage not configured") {
+              el.innerHTML = '<span class="cn-dot off"></span> <b>Almost there — the tracer needs a ' +
+                "store.</b> The site is serving the tracer, but no database is connected to keep the " +
+                "visits. Add a KV store to the project and redeploy. See " +
+                "<span class='mono'>DEPLOY_VERCEL.md</span>.";
+            } else if (res.status >= 200 && res.status < 400) {
+              el.innerHTML = '<span class="cn-dot ok"></span> ' +
+                "<b>Capture server is running.</b> You can make a link.";
+            } else {
+              throw "bad";
+            }
           })
           .catch(function () {
-            el.innerHTML = '<span class="cn-dot off"></span> <b>Capture server is not running.</b> ' +
+            el.innerHTML = '<span class="cn-dot off"></span> <b>Capture server is not answering.</b> ' +
               (sameOrigin
-                ? "This site is not serving the tracer. Ask whoever hosts it to run the toolkit " +
-                  "with <span class='mono'>serve.py</span>."
+                ? "The tracer backend on this site is not responding. On Vercel, make sure the " +
+                  "<span class='mono'>api</span> folder deployed and a KV store is connected " +
+                  "(<span class='mono'>DEPLOY_VERCEL.md</span>). On your own server, run " +
+                  "<span class='mono'>serve.py</span>."
                 : "Start the toolkit with the <b>Start Sutra</b> shortcut, then reopen this tool.");
           });
       }
