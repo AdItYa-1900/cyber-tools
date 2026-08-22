@@ -41,14 +41,6 @@
     desc: "Generate a link that records the IP, device and time when a person of interest opens it.",
     render: function (root) {
       root.innerHTML =
-        '<div class="note danger"><b>Read this before you deploy a link</b>' +
-        "<p>This is a lawful tracer. It records the IP address, device details and time, and it " +
-        "asks for location through the browser's own prompt. <b>It does not, and will not, capture " +
-        "camera or microphone.</b> Covert camera or mic capture against a link-recipient is not " +
-        "authorised by any police power, is inadmissible, and is itself an offence. Deploy the " +
-        "link only against a legitimate person of interest, with your unit's authority, and " +
-        "disclose the full capture log.</p></div>" +
-
         '<div class="card"><h3>Step 1 — Make the link</h3>' +
           '<div id="cn-status" class="cn-status"></div>' +
           '<div class="grid c2" style="margin-top:12px">' +
@@ -57,28 +49,15 @@
             '<div class="field"><label class="lbl">Name for the link (optional)</label>' +
             '<input type="text" id="cn-slug" placeholder="notice-4021" maxlength="32"></div>' +
           "</div>" +
-          '<p class="xs muted">The name becomes part of the web address, so the link reads cleanly, ' +
-          "e.g. <span class='mono'>/t/c/notice-4021</span>. Letters, numbers and hyphens only. It is " +
-          "a plain label on your own address; it does not, and must not, imitate another " +
-          "organisation.</p>" +
           '<div class="row"><button class="btn primary" id="cn-make">Make a tracer link</button></div>' +
           '<div id="cn-link" style="margin-top:14px"></div>' +
-          '<details style="margin-top:14px"><summary class="small">Advanced: change the server address</summary>' +
+          '<details style="margin-top:14px"><summary class="small">Change the server address</summary>' +
           '<div class="field" style="margin-top:8px"><label class="lbl">Server address</label>' +
           '<input type="text" id="cn-base" class="mono"></div>' +
-          '<p class="xs muted">This is filled in for you. Change it only if your unit runs the ' +
-          "capture server on another machine so a device on the internet can reach it. A link " +
-          "pointing at <span class='mono'>127.0.0.1</span> only works on this computer, which is " +
-          "fine for practice.</p>" +
-          '<p class="xs muted" style="margin-top:8px"><b>To get a clean link on your own address:</b> ' +
-          "host the toolkit on your department domain (run <span class='mono'>serve.py</span> there, " +
-          "with HTTPS in front). Opened from that address, every link this makes reads as " +
-          "<span class='mono'>https://your-domain/t/c/notice-4021</span> on its own. Use your own " +
-          "domain only, never a lookalike of another organisation.</p></details></div>" +
+          '<p class="xs muted">Filled in for you. Change it only if the capture server runs on ' +
+          "another machine.</p></details></div>" +
 
         '<div class="card"><h3>Step 2 — Send it, then see who opened it</h3>' +
-          '<p class="small muted">Send the link through your normal channel. Come back here and ' +
-          "press the button to see every device that opened it.</p>" +
           '<input type="hidden" id="cn-tok">' +
           '<div class="row"><button class="btn primary" id="cn-pull">Check who opened the link</button>' +
           '<span id="cn-import-wrap"></span></div>' +
@@ -144,9 +123,8 @@
           .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
           .then(function (d) { showLink(d.link, d.token, ref); })
           .catch(function () {
-            $("#cn-link").innerHTML = '<div class="note danger"><b>The capture server did not answer</b>' +
-              "<p>A link is no use until the server that records the visits is running. Close this " +
-              "and start the toolkit with the <b>Start Sutra</b> shortcut, then try again.</p></div>";
+            $("#cn-link").innerHTML = '<div class="note danger">The capture server is not running, ' +
+              "so a link would record nothing yet. Check the status above.</div>";
             checkServer();
           })
           .then(function () { $("#cn-make").disabled = false; });
@@ -155,13 +133,9 @@
       function showLink(link, tok, ref) {
         $("#cn-tok").value = tok;
         $("#cn-link").innerHTML =
-          '<div class="note ok"><b>Link ready</b>' +
-          (ref ? '<p class="xs" style="margin:4px 0 0">' + esc(ref) + "</p>" : "") + "</div>" +
-          '<div class="copyable" style="margin-top:10px"><pre class="out">' + esc(link) +
+          '<div class="copyable"><pre class="out">' + esc(link) +
           '</pre><button class="btn sm copybtn" data-copy="prev">Copy link</button></div>' +
-          '<p class="small muted" style="margin-top:10px">Every time this is opened, the server ' +
-          "records one visit. Send it, then pull the visits below. The token is " +
-          '<span class="mono">' + esc(tok) + "</span>.</p>";
+          '<p class="xs muted" style="margin-top:8px">Send this, then use step 2 to see who opens it.</p>";
       }
 
       /* ---- pull hits from the server */
