@@ -272,7 +272,7 @@
             '<div style="margin-top:7px"><span class="badge ' + (t.type === "PSU" ? "info" : "") + '">' +
             TK.esc(t.type) + "</span>" + (t.note ? ' <span class="badge warn">' + TK.esc(t.note) + "</span>" : "") +
             "</div></div>";
-        }).join("") + "</div></div>" +
+        }).join("") + "</div></div>";
 
 
       TK.table($("#lsa-tbl"), rows, [
