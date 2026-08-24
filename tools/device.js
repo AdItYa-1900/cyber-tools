@@ -75,6 +75,8 @@
         '<div>Drop a TAC CSV, or <b>browse</b></div></div>' +
         '<div id="tac-status" style="margin-top:12px"></div></div>';
 
+      TK.fileInto("#imei-in", { extract: /\b\d{14,16}\b/g, onLoad: function () { var b = TK.$("#imei-go"); if (b) b.click(); } });
+
 
       var TACDB = null;          // an imported list, if the officer supplies one
       var bundled = null;        // the 248k-code list shipped with the toolkit
@@ -289,6 +291,8 @@
           '<span id="mac-load" class="row tight xs muted"></span></div>' +
         "</div><div id=\"mac-out\"></div>";
 
+      TK.fileInto("#mac-in", { extract: /\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b|\b[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\b/g, onLoad: function () { var b = TK.$("#mac-go"); if (b) b.click(); } });
+
       var DB = null;
       $("#mac-load").innerHTML = '<span class="spinner"></span> loading IEEE registry…';
       TK.loadData("oui.js", "OUI_DB", function (d) {
@@ -435,6 +439,8 @@
           "</div>" +
           '<button class="btn primary" id="ceir-go">Generate</button>' +
           '<div id="ceir-out" style="margin-top:14px"></div></div>';
+
+      TK.fileInto("#ceir-imei", { extract: /\b\d{14,16}\b/g, onLoad: function () { var b = TK.$("#ceir-go"); if (b) b.click(); } });
 
       $("#ceir-go").onclick = function () {
         var imeis = $("#ceir-imei").value.split(/[\n,;]+/).map(function (s) { return s.replace(/[^\d]/g, ""); }).filter(Boolean);

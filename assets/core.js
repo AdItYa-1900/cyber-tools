@@ -617,6 +617,372 @@
     r.readAsText(file);
   };
 
+  /* ---------------------------------------------------- pdf text */
+
+  /* Pulls the text out of a PDF that holds real text. A scanned page
+     holds pictures of words and yields nothing, so the callback reports
+     that explicitly instead of handing back an empty string that the
+     caller would read as "no matches in this document". */
+
+  function inflate(bytes, cb) {
+    if (typeof DecompressionStream !== "function") { cb(null); return; }
+    function attempt(fmt, next) {
+      try {
+        var ds = new DecompressionStream(fmt);
+        var w = ds.writable.getWriter();
+        w.write(bytes); w.close();
+        new Response(ds.readable).arrayBuffer()
+          .then(function (b) { cb(new Uint8Array(b)); })
+          .catch(function () { next(); });
+      } catch (e) { next(); }
+    }
+    /* PDF FlateDecode is zlib-wrapped, but producers exist that emit raw
+       deflate, so fall through rather than losing the stream. */
+    attempt("deflate", function () {
+      attempt("deflate-raw", function () { cb(null); });
+    });
+  }
+
+  function latin1(u8, from, to) {
+    var s = "", i;
+    for (i = from; i < to; i++) s += String.fromCharCode(u8[i]);
+    return s;
+  }
+
+  /* text-showing operators: (str)Tj, [(a)-2(b)]TJ, (str)' and "  */
+  function textFromContent(s) {
+    var out = "", i = 0, n = s.length;
+    function readLiteral(start) {
+      var depth = 1, str = "", j = start;
+      while (j < n && depth > 0) {
+        var ch = s.charAt(j);
+        if (ch === "\\") {
+          var e = s.charAt(j + 1);
+          str += e === "n" ? "\n" : e === "r" ? "" : e === "t" ? "\t" : e;
+          j += 2; continue;
+        }
+        if (ch === "(") depth++;
+        else if (ch === ")") { depth--; if (!depth) { j++; break; } }
+        str += ch; j++;
+      }
+      return { text: str, end: j };
+    }
+    function readHex(start) {
+      var j = start, hex = "";
+      while (j < n && s.charAt(j) !== ">") { hex += s.charAt(j); j++; }
+      hex = hex.replace(/[^0-9a-fA-F]/g, "");
+      var str = "";
+      for (var k = 0; k + 1 < hex.length; k += 2) {
+        var code = parseInt(hex.substr(k, 2), 16);
+        if (code >= 32 || code === 10) str += String.fromCharCode(code);
+      }
+      return { text: str, end: j + 1 };
+    }
+    while (i < n) {
+      var c = s.charAt(i);
+      if (c === "(") { var r = readLiteral(i + 1); out += r.text; i = r.end; continue; }
+      if (c === "<" && s.charAt(i + 1) !== "<") { var h = readHex(i + 1); out += h.text; i = h.end; continue; }
+      /* line-positioning operators end a run of text */
+      if ((c === "T" && "dD*jJ".indexOf(s.charAt(i + 1)) >= 0) || c === "'" || c === '"') {
+        out += "\n"; i += 2; continue;
+      }
+      i++;
+    }
+    return out;
+  }
+
+  TK.pdfText = function (buf, cb) {
+    var u8 = new Uint8Array(buf);
+    var head = latin1(u8, 0, Math.min(u8.length, 2048));
+    if (head.indexOf("%PDF") !== 0 && head.indexOf("%PDF") < 0) { cb(null, "not a PDF"); return; }
+
+    /* locate every stream, with the dictionary that precedes it */
+    var whole = latin1(u8, 0, u8.length);
+    var jobs = [], pos = 0;
+    while (true) {
+      var s = whole.indexOf("stream", pos);
+      if (s < 0) break;
+      var e = whole.indexOf("endstream", s);
+      if (e < 0) break;
+      var dictFrom = Math.max(0, s - 900);
+      var dict = whole.slice(dictFrom, s);
+      var start = s + 6;
+      if (whole.charAt(start) === "\r") start++;
+      if (whole.charAt(start) === "\n") start++;
+
+      /* The EOL that separates the data from the "endstream" keyword is
+         not part of the stream. Feeding it to the decompressor makes it
+         reject the whole object as trailing garbage, which silently
+         turns every compressed PDF into "no text found". Prefer the
+         declared /Length, and fall back to trimming the EOL. */
+      var end = e;
+      var len = /\/Length\s+(\d+)/.exec(dict);
+      if (len && start + (+len[1]) <= e) {
+        end = start + (+len[1]);
+      } else {
+        while (end > start && (whole.charAt(end - 1) === "\n" || whole.charAt(end - 1) === "\r")) end--;
+      }
+
+      jobs.push({ from: start, to: end, flate: /\/FlateDecode/.test(dict), image: /\/Image|\/DCTDecode|\/JPXDecode/.test(dict) });
+      pos = e + 9;
+    }
+
+    if (!jobs.length) { cb(null, "no readable content streams"); return; }
+
+    var text = "", pending = jobs.length, sawImage = false;
+    jobs.forEach(function (j, idx) {
+      if (j.image) { sawImage = true; done(idx, ""); return; }
+      if (!j.flate) { done(idx, textFromContent(whole.slice(j.from, j.to))); return; }
+      inflate(u8.subarray(j.from, j.to), function (out) {
+        done(idx, out ? textFromContent(latin1(out, 0, out.length)) : "");
+      });
+    });
+
+    var parts = [];
+    function done(idx, t) {
+      parts[idx] = t;
+      if (--pending > 0) return;
+      text = parts.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+      if (!text) {
+        cb(null, sawImage
+          ? "this PDF holds page images, not text, so nothing can be read out of it without OCR"
+          : "no text could be extracted");
+        return;
+      }
+      cb(text, null);
+    }
+  };
+
+  /* ---------------------------------------------------- bulk input
+
+     One control, used by every tool that can work on many values at
+     once: drop a CSV, a text file or a text PDF, or paste. The caller
+     gets plain text and does its own extraction. */
+
+  TK.bulkInput = function (host, opts) {
+    opts = opts || {};
+    var id = "bi" + (Math.random() * 1e9 | 0);
+    host.innerHTML =
+      '<div class="drop sm" id="' + id + '-drop"><div>Drop a CSV, text file or PDF, or <b>browse</b></div>' +
+      '<div class="xs muted" style="margin-top:4px">Read on this computer. Nothing is uploaded.</div></div>' +
+      '<div class="field" style="margin:12px 0 0"><textarea id="' + id + '-ta" class="mono" ' +
+      'placeholder="' + esc(opts.placeholder || "…or paste values here, one per line") +
+      '" style="min-height:96px"></textarea></div>' +
+      '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" id="' + id + '-go">' +
+      esc(opts.action || "Check all") + '</button>' +
+      '<button class="btn ghost" id="' + id + '-clear">Clear</button>' +
+      '<span class="xs muted" id="' + id + '-note"></span></div>';
+
+    var ta = $("#" + id + "-ta"), note = $("#" + id + "-note");
+
+    function fire() {
+      var v = ta.value.trim();
+      if (!v) { TK.toast("Nothing to check yet", "warn"); return; }
+      opts.onText(v);
+    }
+
+    TK.dropzone($("#" + id + "-drop"), function (files) {
+      var texts = [], pending = files.length;
+      files.forEach(function (f, i) {
+        function got(t) {
+          texts[i] = t || "";
+          if (--pending === 0) {
+            ta.value = texts.join("\n");
+            note.textContent = files.length + " file(s) loaded, " + TK.fmtNum(ta.value.length) + " characters";
+            fire();
+          }
+        }
+        if (/\.pdf$/i.test(f.name) || f.type === "application/pdf") {
+          var r = new FileReader();
+          r.onload = function () {
+            TK.pdfText(r.result, function (t, why) {
+              if (!t) TK.toast(f.name + ": " + why, "warn");
+              got(t);
+            });
+          };
+          r.readAsArrayBuffer(f);
+        } else {
+          TK.readText(f, got);
+        }
+      });
+    }, { multiple: true, accept: ".csv,.txt,.tsv,.pdf,text/*,application/pdf" });
+
+    $("#" + id + "-go").onclick = fire;
+    $("#" + id + "-clear").onclick = function () {
+      ta.value = ""; note.textContent = "";
+      if (opts.onClear) opts.onClear();
+    };
+    return { set: function (v) { ta.value = v; }, get: function () { return ta.value; } };
+  };
+
+  /* ---------------------------------------------------- file into a box
+
+     Bolts "or load a file" onto any textarea a tool already has, so
+     mass checking works from a seized CSV or a text PDF and not only
+     from what somebody can paste. Call after the tool has rendered.
+
+       TK.fileInto("#imei-in", { onLoad: go })  */
+
+  TK.fileInto = function (sel, opts) {
+    opts = opts || {};
+    var ta = typeof sel === "string" ? $(sel) : sel;
+    if (!ta) return;
+
+    var bar = document.createElement("div");
+    bar.className = "fileload";
+    var id = "fl" + (Math.random() * 1e9 | 0);
+    bar.innerHTML =
+      '<button type="button" class="btn sm ghost" id="' + id + '">' +
+      (opts.label || "Load from CSV, text file or PDF") + "</button>" +
+      '<span class="xs muted" id="' + id + '-n"></span>';
+    ta.parentNode.insertBefore(bar, ta.nextSibling);
+
+    var input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.accept = opts.accept || ".csv,.txt,.tsv,.log,.pdf,text/*,application/pdf";
+    input.style.display = "none";
+    bar.appendChild(input);
+
+    $("#" + id).onclick = function () { input.click(); };
+    input.onchange = function () {
+      var files = Array.prototype.slice.call(input.files);
+      input.value = "";
+      if (!files.length) return;
+      var texts = [], pending = files.length;
+      files.forEach(function (f, i) {
+        function got(t) {
+          texts[i] = t || "";
+          if (--pending) return;
+          var joined = texts.join("\n").trim();
+          if (!joined) return;
+
+          /* A seizure memo or a statement is prose with identifiers in
+             it. Handing a tool that judges one value per line the whole
+             document makes it return "not recognised" for every
+             sentence, which is worse than useless. Where the tool knows
+             the shape of what it checks, pull those out instead. */
+          var pulled = null;
+          if (opts.extract) {
+            var hits = typeof opts.extract === "function"
+              ? opts.extract(joined)
+              : (joined.match(opts.extract) || []);
+            var seen = {}, uniq = [];
+            hits.forEach(function (v) {
+              v = String(v).trim();
+              var k = v.toUpperCase();
+              if (!v || seen[k]) return;
+              seen[k] = 1; uniq.push(v);
+            });
+            if (uniq.length) pulled = uniq.join("\n");
+            else {
+              /* The tool knows what it checks and this file holds none
+                 of it. Emptying the document into the box instead hands
+                 back a "not recognised" verdict for every sentence in
+                 it, which reads as though the tool were broken. Say so,
+                 and leave whatever was already typed alone. */
+              $("#" + id + "-n").textContent = "Nothing of this kind was found in that file";
+              TK.toast("No values of this kind in that file", "warn");
+              return;
+            }
+          }
+
+          var value = pulled || joined;
+          ta.value = opts.append && ta.value.trim()
+            ? ta.value.replace(/\s*$/, "") + "\n" + value
+            : value;
+
+          var n = ta.value.split(/\r?\n/).filter(function (s) { return s.trim(); }).length;
+          $("#" + id + "-n").textContent = files.length + " file(s), " +
+            (pulled ? TK.fmtNum(n) + " found" : TK.fmtNum(n) + " lines");
+          if (opts.onLoad) opts.onLoad(ta.value);
+        }
+        if (/\.pdf$/i.test(f.name) || f.type === "application/pdf") {
+          var r = new FileReader();
+          r.onload = function () {
+            TK.pdfText(r.result, function (t, why) {
+              if (!t) TK.toast(f.name + ": " + why, "warn");
+              got(t);
+            });
+          };
+          r.readAsArrayBuffer(f);
+        } else {
+          TK.readText(f, got);
+        }
+      });
+    };
+  };
+
+  /* ---------------------------------------------------- bulk panel
+
+     The whole "check a list of these" card, so every tool that can do
+     it gets the same one: drop or paste, extract, check each, show a
+     count, a table and a CSV of the results.
+
+       extract(text) -> array of raw values
+       check(value)  -> { value, ok, verdict, ...extra columns }  */
+
+  TK.bulkPanel = function (host, opts) {
+    var wrapId = "bp" + (Math.random() * 1e9 | 0);
+    host.innerHTML = '<div id="' + wrapId + '-in"></div><div id="' + wrapId + '-out"></div>';
+    var out = $("#" + wrapId + "-out");
+
+    TK.bulkInput($("#" + wrapId + "-in"), {
+      placeholder: opts.placeholder,
+      action: opts.action || "Check all",
+      onClear: function () { out.innerHTML = ""; },
+      onText: function (text) {
+        var found = opts.extract(text) || [];
+        var seen = {}, rows = [];
+        found.forEach(function (v) {
+          var key = opts.key ? opts.key(v) : String(v);
+          if (seen[key]) { seen[key].seen++; return; }
+          var r = opts.check(v);
+          if (!r) return;
+          r.seen = 1;
+          seen[key] = r;
+          rows.push(r);
+        });
+
+        if (!rows.length) {
+          out.innerHTML = TK.empty(opts.none || "Nothing of that kind was found in this text.", "∅");
+          return;
+        }
+
+        var bad = rows.filter(function (r) { return !r.ok; });
+        out.innerHTML =
+          '<div class="grid c3" style="margin-top:14px">' +
+          TK.stat(rows.length, "Distinct values", "") +
+          TK.stat(rows.length - bad.length, opts.okLabel || "Valid", "ok") +
+          TK.stat(bad.length, opts.badLabel || "Failed", bad.length ? "danger" : "") +
+          '</div><div id="' + wrapId + '-tbl" style="margin-top:14px"></div>' +
+          '<div class="row" style="margin-top:12px"><button class="btn sm ghost" id="' +
+          wrapId + '-csv">Export results as CSV</button></div>';
+
+        var cols = [{ k: "value", label: opts.valueLabel || "Value", cls: "mono" }]
+          .concat(opts.columns || [])
+          .concat([{ k: "seen", label: "Times seen" },
+                   { k: "verdict", label: "Result", fmt: function (v, row) {
+                     return '<span class="badge ' + (row.ok ? "ok" : "danger") + '">' +
+                       esc(v) + "</span>";
+                   } }]);
+
+        TK.table($("#" + wrapId + "-tbl"), rows, cols);
+
+        $("#" + wrapId + "-csv").onclick = function () {
+          var keys = ["value"].concat((opts.columns || []).map(function (c) { return c.k; }))
+            .concat(["seen", "verdict"]);
+          TK.download(opts.filename || "bulk-check.csv",
+            TK.toCSV(rows.map(function (r) {
+              var o = {};
+              keys.forEach(function (k) { o[k] = r[k]; });
+              return o;
+            }), keys), "text/csv");
+        };
+      }
+    });
+  };
+
   /* ---------------------------------------------------- data table */
 
   /**
@@ -686,6 +1052,9 @@
         return '<tr class="' + cls + '">' + cols.map(function (c) {
           var v = row[c.k];
           var out = c.fmt ? c.fmt(v, row) : esc(v == null ? "" : v);
+          /* a formatter may return an HTML string or a TK.raw wrapper;
+             without this the wrapper stringifies to [object Object] */
+          if (out && out.__raw) out = out.value;
           return '<td class="' + (c.cls || "") + '">' + out + "</td>";
         }).join("") + "</tr>";
       }).join("") || '<tr><td colspan="' + cols.length + '" class="center muted" style="padding:32px">No matching rows</td></tr>';
@@ -975,16 +1344,20 @@
     var cl = TK.cluster(t.cluster);
     document.title = L.name + " · " + TK.t("brand");
 
+    /* The one-line description carries the page. Everything else folds
+       away, so a tool opens ready to use rather than behind a briefing
+       the officer has already read once. */
     var guide = "";
     if (L.what || L.need.length || L.steps.length) {
-      guide = '<section class="guide">' +
-        (L.what ? '<div class="guide-what"><h4>' + esc(TK.t("whatIsThis")) + "</h4><p>" + esc(L.what) + "</p></div>" : "") +
+      guide = '<details class="guide"><summary>' +
+        esc(TK.t("guideToggle", "How to use this tool")) + "</summary><div class=\"guide-in\">" +
+        (L.what ? '<div class="guide-what"><p>' + esc(L.what) + "</p></div>" : "") +
         '<div class="guide-cols">' +
           (L.need.length ? '<div><h4>' + esc(TK.t("youWillNeed")) + "</h4><ul class=\"guide-need\">" +
             L.need.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("") + "</ul></div>" : "") +
           (L.steps.length ? '<div><h4>' + esc(TK.t("howToUse")) + "</h4><ol class=\"guide-steps\">" +
             L.steps.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol></div>" : "") +
-        "</div></section>";
+        "</div></div></details>";
     }
 
     main.innerHTML =

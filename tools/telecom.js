@@ -789,6 +789,8 @@
         '</div>' +
         "</div><div id=\"sms-out\"></div>";
 
+      TK.fileInto("#sms-body", { label: "Load a message export" });
+
       $("#sms-go").onclick = run;
 
       function run() {

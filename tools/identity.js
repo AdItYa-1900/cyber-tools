@@ -36,6 +36,23 @@
           '</div>' +
         "</div><div id=\"mni-out\"></div>";
 
+      TK.fileInto("#mni-in", { extract: function (t) {
+        /* Numbers are written as 98765 43210, 98765-43210 and
+           +91 98765 43210 as often as they are written plainly, so a
+           run of ten contiguous digits misses most of a seizure memo. */
+        /* space and hyphen only, never \s: that matches a newline and
+           swallows the next number on the following line into the same
+           run, so two numbers come back as one. */
+        var out = [], m, re = /(?:\+?91[ -]?)?[6-9][\d -]{8,13}\d/g;
+        while ((m = re.exec(t)) !== null) {
+          var d = m[0].replace(/\D/g, "");
+          if (d.length === 12 && d.slice(0, 2) === "91") d = d.slice(2);
+          if (d.length === 11 && d.charAt(0) === "0") d = d.slice(1);
+          if (/^[6-9]\d{9}$/.test(d)) out.push(d);
+        }
+        return out;
+      }, onLoad: function () { var b = TK.$("#mni-go"); if (b) b.click(); } });
+
       $("#mni-go").onclick = run;
       $("#mni-in").addEventListener("keydown", function (e) {
         if ((e.ctrlKey || e.metaKey) && e.key === "Enter") run();
@@ -285,7 +302,11 @@
           '<div class="row"><button class="btn primary" id="imsi-go">Decode</button>' +
           '' +
           '</div>' +
-        "</div><div id=\"imsi-out\"></div>" +
+        "</div>" +
+        '<div class="card"><h3>Check many at once</h3>' +
+        '<p class="xs muted" style="margin-bottom:12px">Drop an extraction report, a CSV or a PDF and every IMSI in it is decoded to country and network.</p>' +
+        '<div id="imsi-bulk"></div></div>' +
+        "<div id=\"imsi-out\"></div>" +
         '<div class="card"><h3>India PLMN table</h3>' +
         '<p class="small muted">Rows marked <span class="badge warn">unverified</span> come from general ' +
         "knowledge. Confirm them against the DoT or ITU list before putting them in a report.</p>" +
@@ -293,6 +314,40 @@
 
       $("#imsi-go").onclick = go;
       $("#imsi-in").addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+
+      /* Many at once, for a SIM list or an extraction report. */
+      TK.bulkPanel($("#imsi-bulk"), {
+        placeholder: "Paste an extraction report, or drop a CSV or PDF, and every IMSI in it is decoded",
+        action: "Decode all",
+        valueLabel: "IMSI",
+        okLabel: "Network resolved",
+        badLabel: "Unresolved",
+        none: "No 15-digit IMSIs were found in that text.",
+        filename: "imsi-decode.csv",
+        extract: function (text) {
+          var out = [], m, re = /(?<!\d)(\d{15})(?!\d)/g;
+          while ((m = re.exec(text)) !== null) out.push(m[1]);
+          return out;
+        },
+        check: function (d) {
+          var mcc = d.slice(0, 3);
+          var country = MCC_WORLD[mcc] || "";
+          var hit = null, mnc = "";
+          var try3 = d.slice(3, 6), try2 = d.slice(3, 5);
+          hit = lookup(mcc, try3);
+          if (hit) mnc = try3;
+          else { hit = lookup(mcc, try2); mnc = hit ? try2 : try2; }
+          return {
+            value: d, country: country || "MCC " + mcc + " unrecognised",
+            network: hit ? (hit.brand || hit.op || (mcc + "-" + mnc)) : "not in the bundled list",
+            ok: !!(hit && country),
+            verdict: !country ? "Country code not recognised"
+                   : hit ? "Resolved"
+                   : "Country known, network not in the bundled list"
+          };
+        },
+        columns: [{ k: "country", label: "Country" }, { k: "network", label: "Network" }]
+      });
 
       function lookup(mcc, mnc) {
         return MCCMNC.filter(function (r) { return r.mcc === mcc && r.mnc === mnc; })[0] || null;
@@ -545,114 +600,4 @@
     }
   });
 
-  /* ==========================================================
-     5. Verhoeff checksum (Aadhaar structure, training only)
-     ========================================================== */
-  TK.reg({
-    id: "verhoeff",
-    name: "Aadhaar Number Verifier",
-    cluster: "identity",
-    tier: 1,
-    desc: "Verify the check digit of an Aadhaar number. It cannot confirm the number was issued.",
-    lede: "This demonstrates the Verhoeff algorithm and nothing else. It cannot validate an " +
-          "Aadhaar number against UIDAI, and no lawful tool available to an investigator can.",
-    badges: ["Verhoeff (1969)", "Synthetic only"],
-    legal: {
-      authority: "Aadhaar Act 2016 s.33, identity information is disclosed only on the order of a " +
-                 "court not inferior to a District Judge. s.29 bars sharing core biometric information.",
-      threshold: "Court order. An investigating officer cannot requisition this directly.",
-      holder: "UIDAI. Real validation needs AUA/KUA licensing, which is not available for this purpose.",
-      caution: "Do not enter a real Aadhaar number here or anywhere else. Collecting and processing " +
-               "Aadhaar numbers without authority is itself an offence under the Act.",
-      evidence: "A passing checksum means the digits are well-formed. It says nothing about whether " +
-                "the number was ever issued, or to whom."
-    },
-    render: function (root) {
-      // Verhoeff tables
-      var D = [
-        [0,1,2,3,4,5,6,7,8,9],[1,2,3,4,0,6,7,8,9,5],[2,3,4,0,1,7,8,9,5,6],
-        [3,4,0,1,2,8,9,5,6,7],[4,0,1,2,3,9,5,6,7,8],[5,9,8,7,6,0,4,3,2,1],
-        [6,5,9,8,7,1,0,4,3,2],[7,6,5,9,8,2,1,0,4,3],[8,7,6,5,9,3,2,1,0,4],
-        [9,8,7,6,5,4,3,2,1,0]
-      ];
-      var P = [
-        [0,1,2,3,4,5,6,7,8,9],[1,5,7,6,2,8,3,0,9,4],[5,8,0,3,7,9,6,1,4,2],
-        [8,9,1,6,0,4,3,5,2,7],[9,4,5,3,1,2,6,8,7,0],[4,2,8,6,5,7,3,9,0,1],
-        [2,7,9,3,8,0,6,4,1,5],[7,0,4,6,9,1,3,2,5,8]
-      ];
-      var INV = [0,4,3,2,1,5,6,7,8,9];
-
-      function verhoeffCheck(num) {
-        var c = 0, rev = num.split("").reverse();
-        for (var i = 0; i < rev.length; i++) c = D[c][P[i % 8][+rev[i]]];
-        return c === 0;
-      }
-      function verhoeffDigit(payload) {
-        var c = 0, rev = payload.split("").reverse();
-        for (var i = 0; i < rev.length; i++) c = D[c][P[(i + 1) % 8][+rev[i]]];
-        return INV[c];
-      }
-
-      root.innerHTML =
-        '<div class="card"><h3>Check a synthetic number</h3>' +
-          '<div class="field"><label class="lbl">12-digit test number</label>' +
-          '<input type="text" id="vh-in" class="mono" maxlength="14" placeholder="e.g. 999912345670" autocomplete="off"></div>' +
-          '<div id="vh-out"></div></div>' +
-
-        '<div class="card"><h3>Generate training numbers</h3>' +
-          '<p class="small muted">Generated in the 9999 test block so they are visibly synthetic and ' +
-          "will never collide with a real issued number.</p>" +
-          '<div class="row"><button class="btn primary" id="vh-gen">Generate 10</button>' +
-          '<button class="btn" id="vh-gen-csv">Generate 200 as CSV</button></div>' +
-          '<div id="vh-gen-out" style="margin-top:12px"></div></div>';
-
-      function render() {
-        var v = $("#vh-in").value.replace(/[^\d]/g, "");
-        var el = $("#vh-out");
-        if (!v) { el.innerHTML = ""; return; }
-
-        if (/^\d{12}$/.test(v) && v.slice(0, 4) !== "9999") {
-          el.innerHTML = '<div class="note danger"><b>Refusing to process</b><p>This looks like it could be ' +
-            "a live 12-digit number. This page only handles numbers in the 9999 test block. If you were " +
-            "testing the tool, use the generator above.</p></div>";
-          return;
-        }
-        if (v.length !== 12) {
-          el.innerHTML = '<div class="note"><b>' + v.length + " digits</b><p>Needs 12.</p></div>";
-          return;
-        }
-        var ok = verhoeffCheck(v);
-        var expected = verhoeffDigit(v.slice(0, 11));
-        el.innerHTML = '<div class="note ' + (ok ? "ok" : "danger") + '"><b>' +
-          (ok ? "Check digit valid, which does not mean the number was issued"
-              : "Check digit FAILS, this number is mistyped or invented") + "</b>" +
-          "<p>Payload <span class='mono'>" + v.slice(0, 11) + "</span>, check digit <span class='mono'>" +
-          v[11] + "</span>" + (ok ? "" : ", expected <span class='mono'>" + expected + "</span>") + ".</p>" +
-          "<p class='xs muted'>Structurally well-formed only. This is not a statement that the number exists.</p></div>";
-      }
-      $("#vh-in").addEventListener("input", render);
-
-      function gen(n) {
-        var out = [];
-        for (var i = 0; i < n; i++) {
-          var body = "9999";
-          for (var j = 0; j < 7; j++) body += Math.floor(Math.random() * 10);
-          out.push(body + verhoeffDigit(body));
-        }
-        return out;
-      }
-      $("#vh-gen").onclick = function () {
-        var g = gen(10);
-        $("#vh-gen-out").innerHTML = '<div class="copyable"><pre class="out">' + g.join("\n") +
-          '</pre><button class="btn sm copybtn" data-copy="prev">Copy</button></div>' +
-          '<p class="xs muted" style="margin-top:8px">All ten pass Verhoeff. All ten are fictional.</p>';
-      };
-      $("#vh-gen-csv").onclick = function () {
-        var g = gen(200).map(function (x, i) {
-          return { sl: i + 1, number: x, note: "SYNTHETIC - training data only" };
-        });
-        TK.download("synthetic-verhoeff-numbers.csv", TK.toCSV(g), "text/csv");
-      };
-    }
-  });
 })();

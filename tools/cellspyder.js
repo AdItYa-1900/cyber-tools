@@ -358,6 +358,8 @@
             '<textarea id="cs-ids" class="mono" placeholder="404-45-1149-21&#10;404-45-3310-31&#10;1149-22&#10;40445114921"></textarea></div>' +
             '<div class="row"><button class="btn primary" id="cs-go">Look up</button>' +
             '</div>';
+
+      TK.fileInto("#cs-ids", { onLoad: function () { var b = TK.$("#cs-go"); if (b) b.click(); } });
           $("#cs-go").onclick = runCGI;
         } else {
           c.innerHTML =

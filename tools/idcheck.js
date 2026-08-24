@@ -329,6 +329,7 @@
         "</div><div id=\"di-out\"></div>";
 
       $("#di-go").onclick = go;
+      TK.fileInto("#di-in", { extract: /\b(?=[A-Za-z0-9]{8,21}\b)(?=[A-Za-z0-9]*\d)[A-Za-z0-9]+\b/g, onLoad: go });
 
       function go() {
         var lines = $("#di-in").value.split(/[\n,;]+/)

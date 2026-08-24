@@ -151,6 +151,16 @@ def client_ip(handler):
 class Handler(SimpleHTTPRequestHandler):
     """Tracer routes under /t/ ; everything else is a static file."""
 
+    # ONNX Runtime dynamically imports its local ES module glue. Python's
+    # default mimetype table can label .mjs as text/plain, which browsers
+    # correctly reject as a module script.
+    extensions_map = SimpleHTTPRequestHandler.extensions_map.copy()
+    extensions_map.update({
+        ".mjs": "application/javascript",
+        ".wasm": "application/wasm",
+        ".onnx": "application/octet-stream",
+    })
+
     def _json(self, code, obj):
         body = json.dumps(obj).encode()
         self.send_response(code)

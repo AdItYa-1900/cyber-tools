@@ -111,6 +111,8 @@
           '<button class="btn primary" id="c-go">Generate</button>' +
           '<div id="c-out" style="margin-top:14px"></div></div>';
 
+      TK.fileInto("#h-text", { label: "Load a text file or PDF" });
+
       var lastHashes = {};
 
       function renderHashes(host, hashes, meta) {
@@ -261,10 +263,85 @@
           '' +
           '' +
           '</div>' +
-        "</div><div id=\"ipi-out\"></div>";
+        "</div>" +
+        '<div class="card"><h3>Check many at once</h3>' +
+        '<p class="xs muted" style="margin-bottom:12px">Drop a log, a CSV or a PDF and every address in it is sorted into the ones a notice can trace and the ones it cannot.</p>' +
+        '<div id="ipi-bulk"></div></div>' +
+        "<div id=\"ipi-out\"></div>";
 
       $("#ipi-go").onclick = go;
       $("#ipi-in").addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+
+      function validV6(t) {
+        if (t.indexOf(":") < 0) return false;
+        if (/:::/.test(t)) return false;
+        var parts = t.split("::");
+        if (parts.length > 2) return false;
+        function groups(seg) {
+          if (seg === "") return [];
+          var g = seg.split(":");
+          for (var i = 0; i < g.length; i++) {
+            if (!/^[0-9A-Fa-f]{1,4}$/.test(g[i])) return null;
+          }
+          return g;
+        }
+        var a = groups(parts[0]);
+        if (a === null) return false;
+        if (parts.length === 1) return a.length === 8;
+        var b = groups(parts[1]);
+        if (b === null) return false;
+        return a.length + b.length <= 7;
+      }
+
+      /* Many at once. A log or a nodal reply carries dozens of addresses
+         and most of them cannot be traced to anybody at all; sorting the
+         routable ones from the private and carrier-shared ones before
+         drafting a notice saves the requisition that comes back empty. */
+      TK.bulkPanel($("#ipi-bulk"), {
+        placeholder: "Paste a log, or drop a CSV or PDF, and every IP address in it is classified",
+        action: "Classify all",
+        valueLabel: "Address",
+        okLabel: "Traceable",
+        badLabel: "Not traceable",
+        none: "No IP addresses were found in that text.",
+        filename: "ip-classification.csv",
+        extract: function (text) {
+          var out = [], m;
+          var v4 = /(?<![\d.])((?:\d{1,3}\.){3}\d{1,3})(?![\d.])/g;
+          while ((m = v4.exec(text)) !== null) {
+            if (m[1].split(".").every(function (o) { return +o >= 0 && +o <= 255; })) out.push(m[1]);
+          }
+          /* A clock reading is made of hex digits and colons too, so a
+             pattern alone matches 14:41:36 and calls it an address. Take
+             any colon-bearing token and let a real parse decide: without
+             a :: elision an address has exactly eight groups, which a
+             timestamp never has. */
+          var v6 = /[0-9A-Fa-f:]{2,45}/g;
+          while ((m = v6.exec(text)) !== null) {
+            if (validV6(m[0])) out.push(m[0]);
+          }
+          return out;
+        },
+        check: function (v) {
+          var isV6 = v.indexOf(":") !== -1;
+          if (isV6) {
+            return { value: v, version: "IPv6", ok: true,
+                     verdict: "Globally routable, requisition the holding network" };
+          }
+          var res = IP_RESERVED.filter(function (x) { return inCidr(v, x.cidr); })[0];
+          if (!res) {
+            return { value: v, version: "IPv4", ok: true,
+                     verdict: "Globally routable, requisition the holding network" };
+          }
+          var priv = /^(10\.|172\.16|192\.168)/.test(res.cidr);
+          var cgnat = res.cidr === "100.64.0.0/10";
+          return { value: v, version: "IPv4", ok: false,
+                   verdict: priv ? "Private space, identifies nobody outside its own network"
+                          : cgnat ? "Carrier-shared, needs the source port and the exact time"
+                          : res.label };
+        },
+        columns: [{ k: "version", label: "Version" }]
+      });
 
       function toInt(ip) {
         var p = ip.split(".").map(Number);

@@ -135,7 +135,7 @@
         $("#cn-link").innerHTML =
           '<div class="copyable"><pre class="out">' + esc(link) +
           '</pre><button class="btn sm copybtn" data-copy="prev">Copy link</button></div>' +
-          '<p class="xs muted" style="margin-top:8px">Send this, then use step 2 to see who opens it.</p>";
+          '<p class="xs muted" style="margin-top:8px">Send this, then use step 2 to see who opens it.</p>';
       }
 
       /* ---- pull hits from the server */
@@ -215,18 +215,10 @@
         h += '<div class="card"><h3>Captured visits</h3><div id="cn-tbl"></div></div>';
 
         if (withIp.length) {
-          h += '<div class="note ok"><b>What to do with the IP</b>' +
-            "<p>Take the public IP and the exact timestamp to <b>IP Address Check</b> to see which " +
-            "network holds it, then requisition the subscriber from that network under BNSS s.94, " +
-            "quoting the IP and the time to the second. If the address is carrier-grade shared, you " +
-            "also need the source port, which this link does not see: that comes from the network's " +
-            "own logs.</p></div>";
+          h += '<p class="xs muted">Run the IP and exact time through <b>IP Address Check</b>, then ' +
+            "requisition the subscriber from that network under BNSS s.94. An IP identifies a " +
+            "connection, not a person.</p>";
         }
-
-        h += '<div class="note warn"><b>An IP is a network, not a person</b>' +
-          "<p>This places a connection on a network at a time. It does not prove who was holding " +
-          "the device, and a VPN or proxy will show that service's address, not the person's. " +
-          "Treat it as a lead to corroborate, and disclose the complete capture log.</p></div>";
 
         $("#cn-hits").innerHTML = h;
 

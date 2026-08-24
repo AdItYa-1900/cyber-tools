@@ -428,6 +428,8 @@
           '<div class="row"><button class="btn primary" id="ca-go">Check</button></div>' +
         "</div><div id=\"ca-out\"></div>";
 
+      TK.fileInto("#ca-in", { extract: /\b(?:0x[0-9a-fA-F]{40}|bc1[a-z0-9]{25,62}|[13][a-km-zA-HJ-NP-Z1-9]{25,34}|T[A-Za-z1-9]{33}|[LM][a-km-zA-HJ-NP-Z1-9]{26,33}|r[a-zA-Z0-9]{24,34})\b/g, onLoad: function () { var b = TK.$("#ca-go"); if (b) b.click(); } });
+
       $("#ca-go").onclick = go;
 
       function go() {
@@ -487,6 +489,14 @@
       }
     }
   });
+
+  /* Other tools need a hash for exhibit integrity, and window.crypto.subtle
+     is unavailable on file:// pages, so share this implementation. */
+  TK.sha256hex = function (bytes) {
+    var d = sha256(bytes), s = "";
+    for (var i = 0; i < d.length; i++) s += (d[i] < 16 ? "0" : "") + d[i].toString(16);
+    return s;
+  };
 
   /* exposed so the test harness can check the primitives */
   TK._cryptoTest = { sha256: sha256, keccak256: keccak256, b58check: b58check,

@@ -38,6 +38,8 @@
           '</div>' +
         "</div><div id=\"mh-out\"></div>";
 
+      TK.fileInto("#mh-in", { label: "Load a saved header file or PDF" , onLoad: function () { var b = TK.$("#mh-go"); if (b) b.click(); } });
+
       $("#mh-go").onclick = run;
 
       function unfold(text) {
@@ -217,6 +219,10 @@
             '<button data-tz="ist">Source is IST</button>' +
           "</div></div>" +
           '<div id="ts-out" style="margin-top:16px"></div></div>' +
+        '<div class="card"><h3>Convert many at once</h3>' +
+        '<p class="xs muted" style="margin-bottom:12px">Drop a log, a CSV or a PDF and every timestamp in it is ' +
+        "converted to UTC and IST together.</p>" +
+        '<div id="ts-bulk"></div></div>' +
         '<div class="card"><h3>Now</h3><div id="ts-now"></div></div>';
 
       var srcTz = "utc";
@@ -226,6 +232,49 @@
         b.classList.add("on"); srcTz = b.dataset.tz; conv();
       };
       $("#ts-in").addEventListener("input", conv);
+
+      /* Many at once. Platform logs arrive as pages of epoch values, and
+         reading them one at a time is where the five-and-a-half hour
+         mistake gets made. */
+      TK.bulkPanel($("#ts-bulk"), {
+        placeholder: "Paste a log, or drop a CSV or PDF, and every timestamp in it is converted",
+        action: "Convert all",
+        valueLabel: "As written",
+        okLabel: "Converted",
+        badLabel: "Unreadable",
+        none: "No timestamps were found in that text.",
+        filename: "timestamps.csv",
+        extract: function (text) {
+          var out = [], m, re;
+          re = /(?<!\d)(\d{13}|\d{10})(?!\d)/g;
+          while ((m = re.exec(text)) !== null) out.push(m[1]);
+          re = /\b\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2})?\b/g;
+          while ((m = re.exec(text)) !== null) out.push(m[0]);
+          re = /\b\d{2}[-\/]\d{2}[-\/]\d{4}[ ,]+\d{2}:\d{2}(?::\d{2})?\b/g;
+          while ((m = re.exec(text)) !== null) out.push(m[0]);
+          return out;
+        },
+        check: function (v) {
+          var utc = null;
+          if (/^\d{10}$/.test(v)) utc = new Date(+v * 1000);
+          else if (/^\d{13}$/.test(v)) utc = new Date(+v);
+          else {
+            var d = TK.parseDate(v);
+            if (d) {
+              var wall = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(),
+                                  d.getHours(), d.getMinutes(), d.getSeconds());
+              utc = new Date(srcTz === "ist" ? wall - IST : wall);
+            }
+          }
+          if (!utc || isNaN(utc.getTime())) {
+            return { value: v, utc: "", ist: "", ok: false, verdict: "Could not be read" };
+          }
+          var ist = new Date(utc.getTime() + IST);
+          return { value: v, utc: fmt(utc), ist: fmt(ist), ok: true,
+                   verdict: "Converted" };
+        },
+        columns: [{ k: "utc", label: "UTC", cls: "mono" }, { k: "ist", label: "IST", cls: "mono" }]
+      });
 
       var IST = 5.5 * 3600000;
       function fmt(d) {
@@ -312,6 +361,8 @@
           '<div class="row"><button class="btn primary" id="dc-go">Decode</button>' +
           '</div>' +
         "</div><div id=\"dc-out\"></div>";
+
+      TK.fileInto("#dc-in", { label: "Load a file to decode" , onLoad: function () { var b = TK.$("#dc-go"); if (b) b.click(); } });
 
       $("#dc-go").onclick = run;
 

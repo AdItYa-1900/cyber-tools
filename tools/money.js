@@ -40,6 +40,8 @@
         '<p class="small muted">First four characters of any IFSC. The fifth is always 0 (reserved); the ' +
         'last six identify the branch.</p><div id="ifsc-banks"></div></div>';
 
+      TK.fileInto("#ifsc-in", { extract: /\b[A-Z]{4}0[A-Z0-9]{6}\b/g, onLoad: function () { var b = TK.$("#ifsc-go"); if (b) b.click(); } });
+
       $("#ifsc-go").onclick = go;
 
       var DB = null;
@@ -189,6 +191,8 @@
           '</div>' +
         "</div><div id=\"upi-out\"></div>" +
         '<div class="card"><h3>Handle directory</h3><div id="upi-tbl"></div></div>';
+
+      TK.fileInto("#upi-in", { extract: /\b[A-Za-z0-9.\-_]{2,}@[A-Za-z]{2,}\b/g, onLoad: function () { var b = TK.$("#upi-go"); if (b) b.click(); } });
 
       $("#upi-go").onclick = go;
 

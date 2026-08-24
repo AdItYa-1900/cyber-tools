@@ -248,6 +248,8 @@
           '</div>' +
           '<div id="g-out" style="margin-top:14px"></div></div>';
 
+      TK.fileInto("#g-bulk", { onLoad: function () { var b = TK.$("#g-go"); if (b) b.click(); } });
+
       // accepts "21.1179, 81.1223" / "21 07 04 N, 81 07 20 E" / "21°07'04\"N 81°07'20\"E"
       function parsePt(s) {
         if (!s) return null;
